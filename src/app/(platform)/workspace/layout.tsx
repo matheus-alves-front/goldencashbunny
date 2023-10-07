@@ -4,6 +4,11 @@ import styles from './page.module.scss'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
 import { Inter } from 'next/font/google'
 
+export const metadata = {
+  title: 'Lótus Workspace',
+  description: 'Área de trabalho Lótus, faça login para acessar.'
+}
+
 const inter = Inter({ subsets: ['latin'] })
 
 export default function WorkspaceLayout({
