@@ -1,0 +1,67 @@
+@import '/src/styles/theme.scss';
+
+.tableGroup {
+  overflow-x: auto;
+  padding-top: .5rem;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: $box-shadow-low;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  .tableSummary {
+    h2 {
+      margin: .5rem 0;
+      padding: 0 1rem;
+      font-size: 1.5rem;
+      font-weight: 400;
+    }
+  }
+
+  .table {
+    width: 100%;
+    min-width: 600px;
+    padding: 0 1rem;
+    padding-bottom: 1rem;
+   
+  
+  
+    thead, tbody {
+      tr {
+        height: 50px;
+      }
+    }
+  
+    thead {
+      tr {
+        th {
+          color: $color-gray-light;
+  
+          &:first-child {
+            text-align: start;
+          }
+        }
+      }
+    }
+  
+    tbody {
+      tr {
+        td { 
+          * {
+            color: $color-gray-light;
+          }
+  
+          &:first-child {
+            color: $color-black;
+          }
+  
+          &:not(:first-child) {
+            color: $color-gray-light;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+

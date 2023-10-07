@@ -15,6 +15,25 @@
     h3 {
       font-weight: 500;
       margin-bottom: 1rem;
+
+      button {
+        color: $color-black;
+        padding: .4rem;
+        margin-left: .5rem;
+        font-size: .9rem;
+        border-radius: 8px;
+        box-shadow: $box-shadow;
+
+        transition: $transition-fast;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: $color-white;
+          background-color: $color-black;
+        }
+      }
     }
 
     a {

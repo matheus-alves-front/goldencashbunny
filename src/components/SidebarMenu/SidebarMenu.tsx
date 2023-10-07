@@ -1,6 +1,8 @@
 import styles from './sidebarmenu.module.scss'
 import { BsTools } from "react-icons/bs";
 import { IoAnalyticsSharp } from "react-icons/io5";
+import { FaPlus } from "react-icons/fa";
+
 import { 
   MdOutlineAttachMoney, 
   MdOutlineMoneyOffCsred 
@@ -46,13 +48,21 @@ export function SidebarMenu() {
         <a href=""><BsTools className={styles.icon} /> Catálogos</a>
       </nav>
       <nav>
-        <h3>Dashboards</h3>
+        <h3>Dashboards 
+          <button>
+            <FaPlus />
+          </button>
+        </h3>
         {DASHBOARDS.map((space, index) => (
           <a key={index} href=""><IoAnalyticsSharp className={styles.icon} /> {space}</a>
         ))}
       </nav>
       <nav>
-        <h3>Seus Espaços</h3>
+        <h3>Seus Espaços
+          <button>
+            <FaPlus />
+          </button>
+        </h3>
         {SPACES.map((space, index) => (
           <a key={index} href="">
             {space.isEntry 
