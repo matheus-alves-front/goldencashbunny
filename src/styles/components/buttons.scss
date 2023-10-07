@@ -1,0 +1,19 @@
+@mixin button-primary($padding: 1rem) {
+  width: 100%;
+  border: 0;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  background-color: $color-black;
+  color: $color-white;
+  padding: $padding;
+  border-radius: .5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+
+  transition: $transition-fast;
+
+  &:hover {
+    background-color: $color-white;
+    color: $color-black;
+  }
+}
