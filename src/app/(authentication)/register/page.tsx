@@ -1,5 +1,10 @@
 import styles from './page.module.scss'
 
+export const metadata = {
+  title: 'GoldenCashBunny Registro',
+  description: 'Seja Bem vindo ao GoldenCashBunny, sua plataforma digital de Gestão financeira empresarial.'
+}
+
 export default function Home() {
   return (
     <main className={styles.main}>
