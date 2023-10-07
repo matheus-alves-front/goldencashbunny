@@ -1,7 +1,9 @@
 @import '/src/styles/theme.scss';
 
 .main {
-  padding: 1rem;
+  @media (min-width: $desktop) {
+    padding: 1rem;
+  }
 
   .titles {
     background-color: $color-black;
@@ -10,11 +12,15 @@
     align-items: center;
     justify-content: flex-start;
     gap: 1.3rem;
-    padding: 2rem;
     height: 70vh;
     border-radius: 1rem;
     margin-bottom: 20rem;
-    
+    padding: 2rem .5rem;
+
+    @media (min-width: $desktop) {
+      padding: 2rem 2rem;
+    }
+
     .header {
       background: $color-yellow-light;
       padding: .5rem 1rem;

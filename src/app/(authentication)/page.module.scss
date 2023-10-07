@@ -2,14 +2,8 @@
 
 .main {
   padding: 0;
-
-  display: grid;
-  grid-template-columns: 40% 60%;
-  grid-template-rows: 80vh 20vh;
-  height: 110vh;
   max-width: $desktopLarge;
   margin: auto;
-
 
   .formGroup {
     height: 100%;
@@ -116,6 +110,36 @@
       font-size: 2.5rem;
       color: $color-white;
       margin-left: 2rem;
+    }
+  }
+
+  // Responsive
+  @media (min-width: $desktop) {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: 80vh 20vh;
+    height: 100vh;
+  }
+
+  @media (max-width: $desktop) {
+    display: flex;
+    flex-direction: column-reverse;
+
+    .titles {
+      height: 80vh;
+      padding-left: 0;
+      background-size: 100% 100%;
+
+      
+      img, h1 {
+        margin-left: 0;
+      }
+    }
+    
+    .formGroup {
+      margin-top: -3.5rem;
+      margin-bottom: 2rem;
+      z-index: 1;
     }
   }
 }
