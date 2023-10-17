@@ -18,15 +18,19 @@ type ColumnConfig = {
 } 
 
 type TableCreationProps = {
-  tableColumns: ColumnConfig[]
-  tableData: any[]
+  tableColumns: ColumnConfig[];
+  tableData: any[];
+  tableName: string;
   workspace: string;
   space: string;
 }
 
 export function TableCreation({
   tableColumns,
-  tableData
+  tableData,
+  tableName,
+  workspace,
+  space,
 }: TableCreationProps) {
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false)
   

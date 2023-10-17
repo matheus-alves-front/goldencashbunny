@@ -132,6 +132,9 @@ export default async function CreateTablePage({
       <h2>{space}</h2>
 
       <TableCreation 
+        space={space}
+        workspace={workspacename}
+        tableName="hehehe"
         tableColumns={tableColumns}
         tableData={tableData} 
       />
