@@ -1,6 +1,7 @@
 import { HiOutlinePlus } from "react-icons/hi";
 import styles from "./page.module.scss"
 import { SpaceTable } from "@/components/SpaceTable/SpaceTable";
+import Link from "next/link";
 
 export default function SpacePage({
   params
@@ -11,15 +12,16 @@ export default function SpacePage({
   }
 }) {
   const {
+    workspacename,
     space: spaceName
   } = params
   return (
     <>
       <h1 className={styles.pageTitle}>
         {spaceName} 
-        <button className={styles.button}>
+        <Link href={`/workspace/${workspacename}/space/${spaceName}/create-table`} className={styles.button}>
           <HiOutlinePlus />
-        </button>
+        </Link>
         <span className={styles.badge}><small>Criar Categoria</small></span>
       </h1>
       <section>

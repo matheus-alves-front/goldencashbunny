@@ -1,0 +1,96 @@
+@import '/src/styles/theme.scss';
+
+.Content {
+  padding: 2rem 0;
+
+  .InputName {
+    @include input-form();
+  }
+
+  table {
+    table-layout: fixed;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); // Defina sua variável $box-shadow
+    border-radius: 5px;
+    padding: 1px;
+    margin: 1rem 0;
+    background-color: $color-gray-lighter;
+    border-collapse: separate; 
+  
+    thead {
+      tr {
+        th {
+          border: 1px solid  $color-white;
+          border-radius: 5px;
+          padding: 8px;
+          text-align: left;
+          height: 35px;
+          background-color: $color-white;
+
+          &:last-child {
+            min-width: 200px;
+          }
+
+          &.creation {
+            padding: 0;
+            transition: $transition-fast;
+
+            position: relative;
+
+            > dialog {
+              background-color: red;
+              position: absolute;
+              left: 0;
+              right: 0;
+              margin-top: 1rem;
+            }
+
+            > button {
+              transition: $transition-fast;
+              text-align: center;
+              width: 100%;
+              margin-bottom: 2px;
+              padding: 8px;
+            }
+
+            &:hover {
+              background-color: $color-black;
+
+              > button {
+                color: $color-white;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+    tbody {
+      tr {
+        td {
+          border: 1px solid $color-white;
+          padding: 8px;
+          background-color: $color-white;
+          border-radius: 5px;
+          text-align: left;
+          height: 35px;
+
+          &.creation {
+            > input {
+              height: 100%;
+              width: 100%;
+              border: 0;
+              outline: 0 !important;
+              border-bottom: 1px solid $color-gray-light;
+              margin-bottom: -5px;
+            }
+          }
+        }
+      }
+    }
+  
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  }
+}
