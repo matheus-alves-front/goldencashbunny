@@ -1,5 +1,5 @@
 "use client"
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import styles from './tablecreation.module.scss'
 
 const ColumnTypes = [
@@ -17,12 +17,23 @@ type ColumnConfig = {
   columntype: string;
 } 
 
+type TableDataConfig = {
+  value: string;
+  type: string
+}
+
 type TableCreationProps = {
   tableColumns: ColumnConfig[];
   tableData: any[];
   tableName: string;
   workspace: string;
   space: string;
+  isInputMode?: boolean;
+}
+
+type TableFetchProps = {
+  tableColumns: ColumnConfig[];
+  tableData: TableDataConfig[];
 }
 
 export function TableCreation({
@@ -31,8 +42,12 @@ export function TableCreation({
   tableName,
   workspace,
   space,
+  isInputMode
 }: TableCreationProps) {
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false)
+
+  const [tableDataState, setTableDataState] = useState<any[]>([])
+  const [tableColumnsState, setTableColumnsState] = useState<ColumnConfig[]>([])
   
   const onSubmitNewColumn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -51,6 +66,53 @@ export function TableCreation({
       method: 'POST',
       body: JSON.stringify(submitNewColumn)
     })
+
+    const newData = await fetch('http://localhost:3000/api', {
+      method: 'GET',
+    })
+
+    const newDataJson = await newData.json() as TableFetchProps
+
+    const {
+      tableColumns: newTableColumns, 
+      tableData: newTableData
+    } = newDataJson 
+
+    console.log('newTableColumns', newTableColumns)
+    console.log('newTableData', newTableData)
+
+    setTableDataState(newTableData)
+    setTableColumnsState(newTableColumns)
+    setIsNewColumnConfigDialog(false)
+  }
+
+  useEffect(() => {
+    setTableDataState(tableData)
+    setTableColumnsState(tableColumns)
+  }, [])
+
+  const onItemDataChange = ({
+    value,
+    column,
+    item,
+    index
+  }: {
+    value: string | boolean,
+    column: ColumnConfig,
+    item: TableDataConfig,
+    index: number
+  }) => {
+    // console.log("valores parametros", {
+    //   value,
+    //   column,
+    //   item,
+    //   index
+    // })
+    const newTableDataState = [...tableDataState];
+    newTableDataState[index][column.columnname].value = value
+    console.log('newTableDataState[index]', newTableDataState[index][column.columnname].value)
+
+    setTableDataState(newTableDataState)
   }
 
   return (
@@ -63,7 +125,7 @@ export function TableCreation({
       <table>
         <thead>
           <tr>
-            {tableColumns?.map(column => (
+            {tableColumnsState?.map(column => (
               <th key={column.columnname}>
                 {column.columnname}
               </th>
@@ -76,7 +138,7 @@ export function TableCreation({
               <button 
                 onClick={() => setIsNewColumnConfigDialog(!isNewColumnConfigDialog)} 
               >
-                + {tableColumns?.length < 1 && 'Adicionar Coluna'}
+                + {tableColumnsState?.length < 1 && 'Adicionar Coluna'}
               </button>
 
               {/* Column Configuration */}
@@ -118,7 +180,7 @@ export function TableCreation({
                 </form>
               </dialog>
             </th>
-            {tableColumns?.length < 1 && 
+            {tableColumnsState?.length < 1 && 
               <th className={styles.empty}></th>
             }
             <th>
@@ -127,14 +189,31 @@ export function TableCreation({
           </tr>
         </thead>
         <tbody>
-          {tableData.map((item, index) => (
+          {tableDataState.map((item, index) => (
             <tr key={index}>
-              {tableColumns?.map(column => (
+              {tableColumnsState?.map(column => (
                 <td key={column.columnname}>
-                  {item[column.columnname].type !== 'catalog' && item[column.columnname].type !== 'client' 
+                  {item[column.columnname]?.type !== 'catalog' && item[column.columnname]?.type !== 'client' 
                     ?  
-                    <input 
-                      defaultValue={item[column.columnname].value}
+                    <input
+                      value={item[column.columnname].value}
+                      checked={
+                        item[column.columnname].type === 'checkbox' 
+                        ? item[column.columnname].value 
+                        : false
+                      }
+                      onChange={(e) => {
+                        const value = item[column.columnname].type === 'checkbox' 
+                        ? e.target.checked
+                        : e.target.value 
+
+                        onItemDataChange({
+                          value,
+                          column,
+                          item,
+                          index
+                        })
+                      }}
                       type={column.columntype}
                     />
                     : item[column.columnname].value
@@ -145,7 +224,7 @@ export function TableCreation({
               {/* Fixed Columns */}
               <td className={styles.creation}>
               </td>
-              {tableColumns?.length < 1 && 
+              {tableColumnsState?.length < 1 && 
                 <td className={styles.empty}></td>
               }
               <td>

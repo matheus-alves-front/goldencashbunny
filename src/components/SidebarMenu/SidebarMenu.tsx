@@ -36,7 +36,11 @@ const DASHBOARDS = [
   'Custom Dashboard 1',
   'Custom Dashboard 2',
 ]
-export function SidebarMenu() {
+export function SidebarMenu({
+  workspacename
+}: {
+  workspacename: string
+}) {
   return (
     <aside className={styles.Sidebar}>
       <nav>
@@ -64,7 +68,7 @@ export function SidebarMenu() {
           </button>
         </h3>
         {SPACES.map((space, index) => (
-          <a key={index} href="">
+          <a key={index} href={`/workspace/${workspacename}/space/${space.name}`}>
             {space.isEntry 
               ? <MdOutlineAttachMoney className={styles.icon} /> 
               : <MdOutlineMoneyOffCsred className={styles.icon} />

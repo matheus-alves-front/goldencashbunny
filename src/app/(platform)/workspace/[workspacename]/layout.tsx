@@ -25,7 +25,7 @@ export default function WorkspaceLayout({
     <html lang="br">
       <body className={inter.className}>
         <Header />
-        <SidebarMenu />
+        <SidebarMenu workspacename={params.workspacename} />
         <main>
           {children}
         </main>

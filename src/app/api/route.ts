@@ -1,44 +1,33 @@
+type ColumnConfig = {
+  columnname: string;
+  columntype: string;
+} 
+
 let TableColumns = [
   {
     columnname: 'nome',
     columntype: 'string'
-  },
-  {
-    columnname: 'quantidade',
-    columntype: 'number'
-  },
-]
+  }
+] as ColumnConfig[]
 
 let TableData = [
   {
     nome: {
       type: 'text',
       value: 'aaaa'
-    },
-    quantidade: {
-      type: 'number',
-      value: '2'
-    },
+    }
   },
   {
     nome: {
       type: 'text',
       value: 'cccc'
-    },
-    quantidade: {
-      type: 'number',
-      value: '2'
-    },
+    }
   },
   {
     nome: {
       type: 'text',
       value: 'bbbb'
-    },
-    quantidade: {
-      type: 'number',
-      value: '5'
-    },
+    }
   },
 ] as any[]
 
@@ -50,18 +39,24 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const res = await request.json()
+  const res = await request.json() as ColumnConfig
 
   TableColumns = [...TableColumns, res]
 
   const TableDataNew = TableData.map((item) => {
-    const newItem = { ...item }; // Crie uma cópia do objeto existente
-  
-    // Adicione a nova coluna com o nome de res.columnname e um valor inicial vazio
-    newItem[res.columnname] = {
-      type: res.columntype, // Utilize o tipo do res para a nova coluna
-      value: '',
-    };
+    const newItem = { ...item };
+
+    if (res.columntype === 'checkbox') {
+      newItem[res.columnname] = {
+        type: res.columntype, 
+        value: false,
+      };
+    } else {
+      newItem[res.columnname] = {
+        type: res.columntype, 
+        value: '',
+      };
+    }
   
     return newItem;
   });
