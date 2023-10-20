@@ -1,6 +1,10 @@
 "use client"
-import { FormEvent, useEffect, useState } from 'react'
+import { DragEvent, FormEvent, useEffect, useState } from 'react'
 import styles from './tablecreation.module.scss'
+
+import { TfiArrowsVertical } from "react-icons/tfi";
+import { PiTrashBold } from "react-icons/pi";
+
 
 const ColumnTypes = [
   'text',
@@ -85,12 +89,7 @@ export function TableCreation({
     setTableColumnsState(newTableColumns)
     setIsNewColumnConfigDialog(false)
   }
-
-  useEffect(() => {
-    setTableDataState(tableData)
-    setTableColumnsState(tableColumns)
-  }, [])
-
+  
   const onItemDataChange = ({
     value,
     column,
@@ -114,6 +113,24 @@ export function TableCreation({
 
     setTableDataState(newTableDataState)
   }
+
+  const onDragStartListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
+    e.dataTransfer.setData('index', index.toString());
+  };
+
+  const onDragOverListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
+    e.preventDefault();
+    const draggedIndex = Number(e.dataTransfer.getData('index'));
+    if (draggedIndex === index) return;
+    const reorderArray = [...tableDataState];
+    reorderArray.splice(index, 0, reorderArray.splice(draggedIndex, 1)[0]);
+    setTableDataState(reorderArray);
+  };
+
+  useEffect(() => {
+    setTableDataState(tableData)
+    setTableColumnsState(tableColumns)
+  }, [])
 
   return (
     <section className={styles.Content}>
@@ -190,7 +207,11 @@ export function TableCreation({
         </thead>
         <tbody>
           {tableDataState.map((item, index) => (
-            <tr key={index}>
+            <tr key={index} 
+              draggable
+              onDragStart={(e) => onDragStartListReorder(e, index)}
+              onDragOver={(e) => onDragOverListReorder(e, index)}
+            >
               {tableColumnsState?.map(column => (
                 <td key={column.columnname}>
                   {item[column.columnname]?.type !== 'catalog' && item[column.columnname]?.type !== 'client' 
@@ -227,8 +248,16 @@ export function TableCreation({
               {tableColumnsState?.length < 1 && 
                 <td className={styles.empty}></td>
               }
-              <td>
+              <td className={styles.actions}>
                 <button>Detalhes</button>
+                <button className={styles.exclude}>
+                  <PiTrashBold 
+                  />
+                </button>
+                
+                <TfiArrowsVertical 
+                  className={styles.reorder}
+                />
               </td>
             </tr>
           ))}
