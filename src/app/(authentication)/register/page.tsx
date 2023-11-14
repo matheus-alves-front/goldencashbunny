@@ -1,3 +1,4 @@
+import { RegisterForm } from './RegisterForm'
 import styles from './page.module.scss'
 
 export const metadata = {
@@ -39,46 +40,7 @@ export default function Home() {
             </button>
           </div>
           <span>ou</span>
-          <form className={styles.formRegister} action="">
-              <input 
-                type="text"
-                placeholder='Nome' 
-                name='firstname' 
-              />
-              <input 
-                type="text"
-                placeholder='Sobrenome' 
-                name='lastname' 
-              />
-              <input 
-                type="email"
-                placeholder='Email' 
-                name='lastname' 
-              />
-              <input 
-                type="password"
-                placeholder='Senha'
-                name='password' 
-              />
-              <input 
-                type="password"
-                placeholder='Confirme sua senha'
-                name='password' 
-              />
-              <fieldset>
-                <input  
-                  name='termsofuse'
-                  className={styles.checkbox} 
-                  type="checkbox" 
-                />
-                <span>Eu concordo com os 
-                  <strong>Termos e Serviço</strong>
-                </span>
-              </fieldset>
-              <button type='submit'>
-                Cadastre-se
-              </button>
-          </form>
+          <RegisterForm className={styles.formRegister}  />
           <p className={styles.alreadyHave}>Já possui uma conta? <a href="/">Faça login</a></p>
         </section>
       </section>

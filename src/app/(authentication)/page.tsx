@@ -46,7 +46,7 @@ export default function Home() {
               <span>Lembrar credênciais</span>
             </fieldset>
             <button type='submit'>
-              Cadastre-se
+              Entrar
             </button>
           </form>
           <p className={styles.alreadyHave}>Ainda não possui uma conta? <a href="/register">Registre-se aqui.</a></p>
