@@ -1,9 +1,11 @@
 import { HiOutlinePlus } from "react-icons/hi";
 import styles from "./page.module.scss"
-import { SpaceTable } from "@/components/SpaceTable/SpaceTable";
 import Link from "next/link";
+import { fetchInstanceWithCookies } from "@/api/account-requests";
+import {  SpaceTableType, SpaceType } from "@/@types/globalTypes";
+import SpacePageClient from "./page.client";
 
-export default function SpacePage({
+export default async function SpacePage({
   params
 }: {
   params: { 
@@ -12,21 +14,36 @@ export default function SpacePage({
   }
 }) {
   const {
-    workspacename,
-    space: spaceName
+    workspacename: workspaceId,
+    space: spaceId
   } = params
+
+  const space: SpaceType = await fetchInstanceWithCookies(`/space/${spaceId}`, {
+    method: 'GET'
+  })
+
+  // @ts-ignore 
+  if (!space || space.error) {
+    return (
+      <>
+        <h1>Alguma coisa deu errado...</h1>
+        {/* @ts-ignore */}
+        <p>{space.error}</p>
+      </>
+    )
+  }
+
+  const spaceTables: SpaceTableType[] = await fetchInstanceWithCookies(`/table?spaceRef=${space.ref}`, {
+    method: 'GET'
+  })
+
   return (
     <>
-      <h1 className={styles.pageTitle}>
-        {spaceName} 
-        <Link href={`/workspace/${workspacename}/space/${spaceName}/create-table`} className={styles.button}>
-          <HiOutlinePlus />
-        </Link>
-        <span className={styles.badge}><small>Criar Categoria</small></span>
-      </h1>
-      <section>
-        <SpaceTable /> 
-      </section>
+      <SpacePageClient 
+        space={space}
+        workspaceId={workspaceId}
+        spaceTables={spaceTables}
+      />
     </>
   )
 }

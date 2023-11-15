@@ -9,35 +9,13 @@ import {
 } from "react-icons/md";
 import { CookiesType, SpaceType, WorkspaceType } from '@/@types/globalTypes';
 import { fetchInstanceWithCookies } from '@/api/account-requests';
-
-const SPACES = [
-  {
-    name: 'Custos',
-    isEntry: false
-  },
-  {
-    name: 'Despesas',
-    isEntry: false
-  },
-  {
-    name: 'Tráfego Pago',
-    isEntry: true
-  },
-  {
-    name: 'Vendas',
-    isEntry: true
-  },
-  {
-    name: 'Contratos Exclusivos',
-    isEntry: true
-  },
-] 
-
+import Link from 'next/link';
 
 const DASHBOARDS = [
   'Custom Dashboard 1',
   'Custom Dashboard 2',
 ]
+
 export async function SidebarMenu({
   workspace,
   cookies
@@ -50,17 +28,15 @@ export async function SidebarMenu({
     method: 'GET'  
   })
 
-  console.log("spaces", spaces)
-
   return (
     <aside className={styles.Sidebar}>
       <nav>
         <h3>Menu</h3>
-        <a href=""><BsTools className={styles.icon} /> DashBoard</a>
-        <a href=""><BsTools className={styles.icon} /> Configurações</a>
-        <a href=""><BsTools className={styles.icon} /> Precificações</a>
-        <a href=""><BsTools className={styles.icon} /> Clientes</a>
-        <a href=""><BsTools className={styles.icon} /> Catálogos</a>
+        <Link href={`/workspace/${workspace.id}/dashboard`}><BsTools className={styles.icon} /> DashBoard</Link>
+        <Link href=""><BsTools className={styles.icon} /> Configurações</Link>
+        <Link href=""><BsTools className={styles.icon} /> Precificações</Link>
+        <Link href=""><BsTools className={styles.icon} /> Clientes</Link>
+        <Link href=""><BsTools className={styles.icon} /> Catálogos</Link>
       </nav>
       <nav>
         <h3>Dashboards 
@@ -75,12 +51,15 @@ export async function SidebarMenu({
       <nav>
         <h3>
           Seus Espaços
-          <button>
+          <Link href={`/workspace/${workspace.id}/space/create`}>
             <FaPlus />
-          </button>
+          </Link>
         </h3>
         {spaces.map((space, index) => (
-          <a key={index} href={`/workspace/${workspace.id}/space/${space.name}`}>
+          <a 
+            key={index} 
+            href={`/workspace/${space.workspaceId}/space/${space.ref}`}
+          >
             {space.name 
               ? <MdOutlineAttachMoney className={styles.icon} /> 
               : <MdOutlineMoneyOffCsred className={styles.icon} />

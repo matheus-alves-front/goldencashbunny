@@ -4,6 +4,9 @@ import styles from './tablecreation.module.scss'
 
 import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
+import { SpaceTableType, SpaceType } from '@/@types/globalTypes';
+import { DialogItem } from './TableItems/Dialog';
+import { fetchInstanceWithCookies } from '@/api/account-requests';
 
 
 const ColumnTypes = [
@@ -27,12 +30,15 @@ type TableDataConfig = {
 }
 
 type TableCreationProps = {
-  tableColumns: ColumnConfig[];
-  tableData: any[];
-  tableName: string;
-  workspace: string;
-  space: string;
-  isInputMode?: boolean;
+  spaceTable?: SpaceTableType
+  space?: SpaceType
+  onCreateTable?: () => Promise<SpaceTableType>
+  // tableColumns: ColumnConfig[];
+  // tableData: any[];
+  // tableName: string;
+  // workspace: string;
+  // space: string;
+  // isInputMode?: boolean;
 }
 
 type TableFetchProps = {
@@ -41,12 +47,15 @@ type TableFetchProps = {
 }
 
 export function TableCreation({
-  tableColumns,
-  tableData,
-  tableName,
-  workspace,
-  space,
-  isInputMode
+  spaceTable,
+  onCreateTable,
+  space
+  // tableColumns,
+  // tableData,
+  // tableName,
+  // workspace,
+  // space,
+  // isInputMode
 }: TableCreationProps) {
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false)
 
@@ -66,28 +75,31 @@ export function TableCreation({
       columntype: type
     }
 
-    await fetch('http://localhost:3000/api', {
+    console.log(submitNewColumn)
+
+    const submitTableColumn = await fetchInstanceWithCookies(`/table/${spaceTable?.ref}/column`, {
       method: 'POST',
       body: JSON.stringify(submitNewColumn)
     })
 
-    const newData = await fetch('http://localhost:3000/api', {
-      method: 'GET',
-    })
+    console.log(submitTableColumn)
+    // const newData = await fetch('http://localhost:3000/api', {
+    //   method: 'GET',
+    // })
 
-    const newDataJson = await newData.json() as TableFetchProps
+    // const newDataJson = await newData.json() as TableFetchProps
 
-    const {
-      tableColumns: newTableColumns, 
-      tableData: newTableData
-    } = newDataJson 
+    // const {
+    //   tableColumns: newTableColumns, 
+    //   tableData: newTableData
+    // } = newDataJson 
 
-    console.log('newTableColumns', newTableColumns)
-    console.log('newTableData', newTableData)
+    // console.log('newTableColumns', newTableColumns)
+    // console.log('newTableData', newTableData)
 
-    setTableDataState(newTableData)
-    setTableColumnsState(newTableColumns)
-    setIsNewColumnConfigDialog(false)
+    // setTableDataState(newTableData)
+    // setTableColumnsState(newTableColumns)
+    // setIsNewColumnConfigDialog(false)
   }
   
   const onItemDataChange = ({
@@ -127,15 +139,16 @@ export function TableCreation({
     setTableDataState(reorderArray);
   };
 
-  useEffect(() => {
-    setTableDataState(tableData)
-    setTableColumnsState(tableColumns)
-  }, [])
-
   return (
     <section className={styles.Content}>
       <input
         className={styles.InputName} 
+        onChange={(e) => {
+          console.log(e.target.value)
+          // if (!spaceTable && onCreateTable) {
+          //  onCreateTable(e.currentTarget.value)
+          // } else {}
+        }}
         placeholder="Nome da Tabela" 
         type="text" 
       />
@@ -159,43 +172,13 @@ export function TableCreation({
               </button>
 
               {/* Column Configuration */}
-              <dialog open={isNewColumnConfigDialog}>
-                <form onSubmit={onSubmitNewColumn}>
-                  <input
-                    name='columnname'
-                    placeholder='Nome da Coluna' 
-                    type="text" 
-                  />
-                  <label htmlFor="columntype">
-                    Tipo
-                  </label>
-                  <select name="columntype" id="columntype">
-                    {ColumnTypes.map((type) => (
-                      <option 
-                        value={type}
-                        key={type}
-                      >
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                  <footer>
-                    <button 
-                      className={styles.resetCreation}
-                      onClick={() => setIsNewColumnConfigDialog(false)}
-                      type="reset"
-                    >
-                      Cancelar
-                    </button>
-                    <button 
-                      className={styles.submitCreation}
-                      type="submit"
-                    >
-                      Criar
-                    </button>
-                  </footer>
-                </form>
-              </dialog>
+              <DialogItem 
+                columnTypes={ColumnTypes}
+                isNewColumnConfigDialog={isNewColumnConfigDialog}
+                onSubmitNewColumn={(e) => onSubmitNewColumn(e)}
+                setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
+                styles={styles}
+              />
             </th>
             {tableColumnsState?.length < 1 && 
               <th className={styles.empty}></th>

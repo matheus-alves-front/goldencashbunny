@@ -2,7 +2,7 @@ import { Header } from '@/components/Header/Header'
 import '../../../../styles/globals.scss'
 import '../../../../styles/platform-globals.scss'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
-import { Inter } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 import { getAllCookies } from '@/api/on-connects'
 import { fetchInstance, setCookies } from '@/api/account-requests'
 import { AccountType, CookiesType, WorkspaceType } from '@/@types/globalTypes'
@@ -12,7 +12,7 @@ export const metadata = {
   description: 'Área de trabalho Lótus, faça login para acessar.'
 }
 
-const inter = Inter({ subsets: ['latin'] })
+const opensans = Open_Sans({ subsets: ['latin'] })
 
 export default async function WorkspaceLayout({
   children,
@@ -46,7 +46,7 @@ export default async function WorkspaceLayout({
   
   return (
     <html lang="br">
-      <body className={inter.className}>
+      <body className={opensans.className}>
         <Header 
           workspace={workspace} 
           account={account}

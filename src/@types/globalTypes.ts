@@ -21,6 +21,29 @@ export type SpaceType = {
   workspaceId: string, 
 }
 
+export type SpaceTableType = {
+  ref: string,
+  name: string,
+  creationDate: string,
+  spaceRef: string, 
+}
+
+export type TableColumnType = {
+  ref: string,
+  columnName: string,
+  columnType: string,
+  spaceTableRef: string, 
+}
+
+export type TableDataType = {
+  ref: string,
+  columnName: string,
+  value: string,
+  type: string,
+  creationDate: string,
+  spaceTableRef: string, 
+}
+
 export type ErrorType = {
   error: string
 }
@@ -28,4 +51,8 @@ export type ErrorType = {
 export type CookiesType = {
   xgoldentoken: string,
   xgoldenworkspace: string
+}
+
+export interface CustomStylesType {
+  [className: string]: string;
 }
