@@ -4,7 +4,7 @@ import { WorkspaceType } from "@/@types/globalTypes"
 import styles from './page.module.scss'
 import Link from "next/link"
 import { IoAlbums } from "react-icons/io5"
-import { fetchInstance } from "@/api/account-requests"
+import { fetchInstance, setCookies } from "@/api/account-requests"
 import { useRouter } from "next/navigation"
 
 export function WorkspacesClientPage({
@@ -51,6 +51,7 @@ export function WorkspacesClientPage({
           <Link 
             key={workspace.id}
             className={styles.workspacesButton}
+            onClick={() => setCookies(xgoldentoken, workspace.id)}
             href={`workspace/${workspace.id}/dashboard`} 
           >
             <span>{workspace.companyname} Workspace</span>

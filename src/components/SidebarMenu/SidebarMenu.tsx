@@ -7,6 +7,8 @@ import {
   MdOutlineAttachMoney, 
   MdOutlineMoneyOffCsred 
 } from "react-icons/md";
+import { CookiesType, SpaceType, WorkspaceType } from '@/@types/globalTypes';
+import { fetchInstanceWithCookies } from '@/api/account-requests';
 
 const SPACES = [
   {
@@ -36,11 +38,20 @@ const DASHBOARDS = [
   'Custom Dashboard 1',
   'Custom Dashboard 2',
 ]
-export function SidebarMenu({
-  workspacename
+export async function SidebarMenu({
+  workspace,
+  cookies
 }: {
-  workspacename: string
+  workspace: WorkspaceType,
+  cookies: CookiesType
 }) {
+  
+  const spaces: SpaceType[] = await fetchInstanceWithCookies('/space', {
+    method: 'GET'  
+  })
+
+  console.log("spaces", spaces)
+
   return (
     <aside className={styles.Sidebar}>
       <nav>
@@ -62,14 +73,15 @@ export function SidebarMenu({
         ))}
       </nav>
       <nav>
-        <h3>Seus Espaços
+        <h3>
+          Seus Espaços
           <button>
             <FaPlus />
           </button>
         </h3>
-        {SPACES.map((space, index) => (
-          <a key={index} href={`/workspace/${workspacename}/space/${space.name}`}>
-            {space.isEntry 
+        {spaces.map((space, index) => (
+          <a key={index} href={`/workspace/${workspace.id}/space/${space.name}`}>
+            {space.name 
               ? <MdOutlineAttachMoney className={styles.icon} /> 
               : <MdOutlineMoneyOffCsred className={styles.icon} />
             }

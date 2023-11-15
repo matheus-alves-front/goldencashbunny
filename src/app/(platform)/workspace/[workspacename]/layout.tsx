@@ -4,7 +4,8 @@ import '../../../../styles/platform-globals.scss'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
 import { Inter } from 'next/font/google'
 import { getAllCookies } from '@/api/on-connects'
-import { setCookies } from '@/api/account-requests'
+import { fetchInstance, setCookies } from '@/api/account-requests'
+import { AccountType, CookiesType, WorkspaceType } from '@/@types/globalTypes'
 
 export const metadata = {
   title: 'Lótus Workspace',
@@ -22,19 +23,38 @@ export default async function WorkspaceLayout({
     workspacename: string
   }
 }) {
-  const {
-    xgoldentoken
-  } = await getAllCookies()
+  const { workspacename } = params
+  const allCookies = await getAllCookies() as CookiesType
   
-  // await setCookies(
-  //   String(xgoldentoken),
-  //   params.workspacename
-  // )
+  const { 
+    xgoldentoken
+  } = allCookies
+
+  const account: AccountType = await fetchInstance(`/account/id/${xgoldentoken}`, {
+    method: 'GET',
+    headers: {
+      'xgoldentoken': String(xgoldentoken)
+    }
+  })
+
+  const workspace: WorkspaceType = await fetchInstance(`/workspace/id/${workspacename}`, {
+    method: 'GET',
+    headers: {
+      'xgoldentoken': String(xgoldentoken)
+    }
+  })
+  
   return (
     <html lang="br">
       <body className={inter.className}>
-        <Header />
-        <SidebarMenu workspacename={params.workspacename} />
+        <Header 
+          workspace={workspace} 
+          account={account}
+        />
+        <SidebarMenu 
+          workspace={workspace}
+          cookies={allCookies} 
+        />
         <main>
           {children}
         </main>

@@ -14,6 +14,18 @@ export type WorkspaceType = {
   accountId: string
 }
 
+export type SpaceType = {
+  ref: string,
+  name: string,
+  creationDate: string,
+  workspaceId: string, 
+}
+
 export type ErrorType = {
   error: string
+}
+
+export type CookiesType = {
+  xgoldentoken: string,
+  xgoldenworkspace: string
 }
