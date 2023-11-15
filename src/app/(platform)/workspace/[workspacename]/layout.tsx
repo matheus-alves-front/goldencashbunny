@@ -3,6 +3,8 @@ import '../../../../styles/globals.scss'
 import '../../../../styles/platform-globals.scss'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
 import { Inter } from 'next/font/google'
+import { getAllCookies } from '@/api/on-connects'
+import { setCookies } from '@/api/account-requests'
 
 export const metadata = {
   title: 'Lótus Workspace',
@@ -11,7 +13,7 @@ export const metadata = {
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function WorkspaceLayout({
+export default async function WorkspaceLayout({
   children,
   params
 }: {
@@ -20,7 +22,14 @@ export default function WorkspaceLayout({
     workspacename: string
   }
 }) {
-  console.log(params)
+  const {
+    xgoldentoken
+  } = await getAllCookies()
+  
+  // await setCookies(
+  //   String(xgoldentoken),
+  //   params.workspacename
+  // )
   return (
     <html lang="br">
       <body className={inter.className}>

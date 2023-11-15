@@ -8,10 +8,6 @@ export async function fetchInstance(
   route: string,
   params: globalThis.RequestInit
 ) {
-  const cookie = cookies()
-
-  console.log("cookie", cookie)
-
   const fetchRequest = await fetch(`${API_URL}${route}`, {
     ...params,
     headers: {
@@ -20,6 +16,17 @@ export async function fetchInstance(
     },
   })
 
-  console.log("fetchRequest.headers", fetchRequest.url)
-  return await fetchRequest.json()
+  const fetchJson = await fetchRequest.json()
+
+  return fetchJson
 }
+
+export async function setCookies(
+  xgoldentoken: string,
+  xgoldenworkspace: string
+) {
+  const cookie = cookies()
+
+  cookie.set('xgoldentoken', xgoldentoken)  
+  cookie.set('xgoldenworkspace', xgoldenworkspace)
+} 

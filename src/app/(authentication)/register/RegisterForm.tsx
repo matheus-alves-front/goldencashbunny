@@ -1,9 +1,11 @@
 "use client"
 import { FormEvent } from 'react'
 import styles from './page.module.scss'
-import { fetchInstance } from '@/api/account-requests'
+import { fetchInstance, setCookies } from '@/api/account-requests'
+import { useRouter } from 'next/navigation'
 
 export function RegisterForm({...rest}) {
+  const router = useRouter()
   const onSubmitRegisterAccount = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
@@ -19,13 +21,14 @@ export function RegisterForm({...rest}) {
       password: password.value
     })
 
-    console.log(registerData)
     const request = await fetchInstance('/account', {
       method: 'POST',
       body: registerData
     })
 
-    console.log(request)
+    setCookies(request.id, '')
+
+    router.push('/workspaces')
   }
 
   return (
