@@ -1,6 +1,6 @@
 "use server"
 import { cookies } from "next/headers";
-import { clearAllCookies, fetchInstance } from "./account-requests";
+import { fetchInstance } from "./account-requests";
 import { redirect } from "next/navigation";
 import { AccountType } from "@/@types/globalTypes";
 

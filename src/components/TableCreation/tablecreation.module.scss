@@ -4,7 +4,20 @@
   padding: 2rem 0;
 
   .InputName {
-    @include input-form();
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    gap: 1rem;
+    
+    > input {
+      @include input-form();
+    }
+    > button {
+      @include button-outline-primary();
+      width: auto;
+      margin: 0;
+      padding: 0 1rem;
+    }
   }
 
   table {

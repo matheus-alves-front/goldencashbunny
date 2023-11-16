@@ -39,7 +39,12 @@ export default function SpacePageClient({
         <span className={styles.badge}><small>Criar Categoria</small></span>
       </h1>
       <section>
-        {isCreateNewTable && <TableCreation />}
+        {isCreateNewTable && 
+          <TableCreation 
+            isNewTable={isCreateNewTable} 
+            space={space}
+          />
+        }
         {spaceTables.map((table) => (
           <TableCreation 
             key={table.ref}

@@ -1,5 +1,5 @@
 "use client"
-import { DragEvent, FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import styles from './tablecreation.module.scss'
 
 import { TfiArrowsVertical } from "react-icons/tfi";
@@ -7,7 +7,8 @@ import { PiTrashBold } from "react-icons/pi";
 import { SpaceTableType, SpaceType } from '@/@types/globalTypes';
 import { DialogItem } from './TableItems/Dialog';
 import { fetchInstanceWithCookies } from '@/api/account-requests';
-
+import { onCreateTable, onTableNameUpdate } from './utils/table-handler';
+import { useRouter } from 'next/navigation';
 
 const ColumnTypes = [
   'text',
@@ -30,15 +31,10 @@ type TableDataConfig = {
 }
 
 type TableCreationProps = {
-  spaceTable?: SpaceTableType
-  space?: SpaceType
-  onCreateTable?: () => Promise<SpaceTableType>
-  // tableColumns: ColumnConfig[];
-  // tableData: any[];
-  // tableName: string;
-  // workspace: string;
-  // space: string;
-  // isInputMode?: boolean;
+  spaceTable?: SpaceTableType,
+  space: SpaceType,
+  isNewTable?: boolean,
+  onCreateTable?: () => Promise<SpaceTableType>,
 }
 
 type TableFetchProps = {
@@ -48,15 +44,12 @@ type TableFetchProps = {
 
 export function TableCreation({
   spaceTable,
-  onCreateTable,
-  space
-  // tableColumns,
-  // tableData,
-  // tableName,
-  // workspace,
-  // space,
-  // isInputMode
+  space,
+  isNewTable
 }: TableCreationProps) {
+  const router = useRouter()
+  const [tableName, setTableName] = useState('')
+  const [isEditTableName, setIsEditTableName] = useState(false)
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false)
 
   const [tableDataState, setTableDataState] = useState<any[]>([])
@@ -102,56 +95,72 @@ export function TableCreation({
     // setIsNewColumnConfigDialog(false)
   }
   
-  const onItemDataChange = ({
-    value,
-    column,
-    item,
-    index
-  }: {
-    value: string | boolean,
-    column: ColumnConfig,
-    item: TableDataConfig,
-    index: number
-  }) => {
-    // console.log("valores parametros", {
-    //   value,
-    //   column,
-    //   item,
-    //   index
-    // })
-    const newTableDataState = [...tableDataState];
-    newTableDataState[index][column.columnname].value = value
-    console.log('newTableDataState[index]', newTableDataState[index][column.columnname].value)
+  // const onItemDataChange = ({
+  //   value,
+  //   column,
+  //   item,
+  //   index
+  // }: {
+  //   value: string | boolean,
+  //   column: ColumnConfig,
+  //   item: TableDataConfig,
+  //   index: number
+  // }) => {
+  //   // console.log("valores parametros", {
+  //   //   value,
+  //   //   column,
+  //   //   item,
+  //   //   index
+  //   // })
+  //   const newTableDataState = [...tableDataState];
+  //   newTableDataState[index][column.columnname].value = value
+  //   console.log('newTableDataState[index]', newTableDataState[index][column.columnname].value)
 
-    setTableDataState(newTableDataState)
-  }
+  //   setTableDataState(newTableDataState)
+  // }
 
-  const onDragStartListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
-    e.dataTransfer.setData('index', index.toString());
-  };
+  // const onDragStartListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
+  //   e.dataTransfer.setData('index', index.toString());
+  // };
 
-  const onDragOverListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
-    e.preventDefault();
-    const draggedIndex = Number(e.dataTransfer.getData('index'));
-    if (draggedIndex === index) return;
-    const reorderArray = [...tableDataState];
-    reorderArray.splice(index, 0, reorderArray.splice(draggedIndex, 1)[0]);
-    setTableDataState(reorderArray);
-  };
+  // const onDragOverListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
+  //   e.preventDefault();
+  //   const draggedIndex = Number(e.dataTransfer.getData('index'));
+  //   if (draggedIndex === index) return;
+  //   const reorderArray = [...tableDataState];
+  //   reorderArray.splice(index, 0, reorderArray.splice(draggedIndex, 1)[0]);
+  //   setTableDataState(reorderArray);
+  // };
+
+  useEffect(() => {
+    setTableName(spaceTable ? spaceTable.name : '')
+  }, [])
 
   return (
     <section className={styles.Content}>
-      <input
-        className={styles.InputName} 
-        onChange={(e) => {
-          console.log(e.target.value)
-          // if (!spaceTable && onCreateTable) {
-          //  onCreateTable(e.currentTarget.value)
-          // } else {}
-        }}
-        placeholder="Nome da Tabela" 
-        type="text" 
-      />
+      {isNewTable || isEditTableName
+      ?
+        <div className={styles.InputName}>
+          <input
+            value={tableName}
+            onChange={(e) => setTableName(e.target.value)}
+            placeholder="Nome da Tabela" 
+            type="text" 
+          />
+          <button onClick={
+            spaceTable
+            ? () => onTableNameUpdate(tableName, spaceTable)
+            : async () => {
+              await onCreateTable(tableName, space.ref)
+              console.log(tableName, space.ref)
+            }
+          }>
+            Salvar
+          </button>
+        </div>
+      :
+        <h3>{tableName}</h3>
+      }
       <table>
         <thead>
           <tr>
@@ -188,12 +197,13 @@ export function TableCreation({
             </th>
           </tr>
         </thead>
+
         <tbody>
           {tableDataState.map((item, index) => (
             <tr key={index} 
               draggable
-              onDragStart={(e) => onDragStartListReorder(e, index)}
-              onDragOver={(e) => onDragOverListReorder(e, index)}
+              // onDragStart={(e) => onDragStartListReorder(e, index)}
+              // onDragOver={(e) => onDragOverListReorder(e, index)}
             >
               {tableColumnsState?.map(column => (
                 <td key={column.columnname}>
@@ -211,12 +221,12 @@ export function TableCreation({
                         ? e.target.checked
                         : e.target.value 
 
-                        onItemDataChange({
-                          value,
-                          column,
-                          item,
-                          index
-                        })
+                        // onItemDataChange({
+                        //   value,
+                        //   column,
+                        //   item,
+                        //   index
+                        // })
                       }}
                       type={column.columntype}
                     />
