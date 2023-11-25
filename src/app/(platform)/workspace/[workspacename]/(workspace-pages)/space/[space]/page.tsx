@@ -1,9 +1,11 @@
-import { HiOutlinePlus } from "react-icons/hi";
-import styles from "./page.module.scss"
-import Link from "next/link";
 import { fetchInstanceWithCookies } from "@/api/account-requests";
-import {  SpaceTableType, SpaceType } from "@/@types/globalTypes";
+import {  SpaceTableType, SpaceType, TableColumnType, TableDataType } from "@/@types/globalTypes";
 import SpacePageClient from "./page.client";
+
+interface FullSpaceTables extends SpaceTableType {
+  columns: TableColumnType[],
+  data: TableDataType
+}
 
 export default async function SpacePage({
   params
@@ -33,9 +35,11 @@ export default async function SpacePage({
     )
   }
 
-  const spaceTables: SpaceTableType[] = await fetchInstanceWithCookies(`/table?spaceRef=${space.ref}`, {
+  const spaceTableComplete = await fetch(`http://localhost:3000/api/tables?spaceRef=${space.ref}`, {
     method: 'GET'
   })
+
+  const spaceTables: FullSpaceTables[] = await spaceTableComplete.json()
 
   return (
     <>

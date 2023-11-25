@@ -4,10 +4,10 @@ import styles from './tablecreation.module.scss'
 
 import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
-import { SpaceTableType, SpaceType } from '@/@types/globalTypes';
-import { DialogItem } from './TableItems/Dialog';
+import { SpaceTableType, SpaceType, TableColumnType } from '@/@types/globalTypes';
+import { DialogItem } from '../SpaceTable/TableItems/Dialog';
 import { fetchInstanceWithCookies } from '@/api/account-requests';
-import { onCreateTable, onTableNameUpdate } from './utils/table-handler';
+import { getAllColumnsFromTable, getAllDataFromTable, onCreateTable, onSubmitNewColumn, onTableNameUpdate } from '../SpaceTable/utils/table-handler';
 import { useRouter } from 'next/navigation';
 
 const ColumnTypes = [
@@ -21,8 +21,8 @@ const ColumnTypes = [
 ]
 
 type ColumnConfig = {
-  columnname: string;
-  columntype: string;
+  columnName: string;
+  columnType: string;
 } 
 
 type TableDataConfig = {
@@ -34,7 +34,7 @@ type TableCreationProps = {
   spaceTable?: SpaceTableType,
   space: SpaceType,
   isNewTable?: boolean,
-  onCreateTable?: () => Promise<SpaceTableType>,
+  onTableCreateFinish?: () => void,
 }
 
 type TableFetchProps = {
@@ -45,56 +45,26 @@ type TableFetchProps = {
 export function TableCreation({
   spaceTable,
   space,
-  isNewTable
+  isNewTable,
+  onTableCreateFinish
 }: TableCreationProps) {
   const router = useRouter()
   const [tableName, setTableName] = useState('')
+  const [table, setTable] = useState<SpaceTableType | null>(null)
+
   const [isEditTableName, setIsEditTableName] = useState(false)
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false)
 
   const [tableDataState, setTableDataState] = useState<any[]>([])
-  const [tableColumnsState, setTableColumnsState] = useState<ColumnConfig[]>([])
+  const [tableColumnsState, setTableColumnsState] = useState<TableColumnType[]>([])
   
-  const onSubmitNewColumn = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    
-    const formData = new FormData(e.currentTarget)
-    
-    const name = formData.get('columnname') as string;
-    const type = formData.get('columntype') as string;
-
-    const submitNewColumn: ColumnConfig = {
-      columnname: name,
-      columntype: type
-    }
-
-    console.log(submitNewColumn)
-
-    const submitTableColumn = await fetchInstanceWithCookies(`/table/${spaceTable?.ref}/column`, {
-      method: 'POST',
-      body: JSON.stringify(submitNewColumn)
-    })
-
-    console.log(submitTableColumn)
-    // const newData = await fetch('http://localhost:3000/api', {
-    //   method: 'GET',
-    // })
-
-    // const newDataJson = await newData.json() as TableFetchProps
-
-    // const {
-    //   tableColumns: newTableColumns, 
-    //   tableData: newTableData
-    // } = newDataJson 
-
-    // console.log('newTableColumns', newTableColumns)
-    // console.log('newTableData', newTableData)
-
-    // setTableDataState(newTableData)
-    // setTableColumnsState(newTableColumns)
-    // setIsNewColumnConfigDialog(false)
+  const onCreateNewTable = async () => {
+    const newTable = await onCreateTable(tableName, space.ref)
+    setTable(newTable)
+    onTableCreateFinish && onTableCreateFinish()
+    router.refresh()
   }
-  
+
   // const onItemDataChange = ({
   //   value,
   //   column,
@@ -134,7 +104,23 @@ export function TableCreation({
 
   useEffect(() => {
     setTableName(spaceTable ? spaceTable.name : '')
+    setTable(spaceTable ? spaceTable : null)
+    spaceTable && onRenderTable(spaceTable).catch(e => console.log(e))
   }, [])
+
+  useEffect(() => {
+    if(table?.name === 'escroto') {
+      console.log(table)
+    }
+  }, [tableColumnsState])
+
+  const onRenderTable = async (tableParam: SpaceTableType) => {
+    const getColumns = await getAllColumnsFromTable(tableParam)
+    setTableColumnsState(getColumns)
+    console.log("getColumns", tableParam?.name, getColumns)
+    const getAllTableData = await getAllDataFromTable(tableParam)
+    console.log("getAllTableData", tableParam?.name, getAllTableData)
+  }
 
   return (
     <section className={styles.Content}>
@@ -148,12 +134,9 @@ export function TableCreation({
             type="text" 
           />
           <button onClick={
-            spaceTable
-            ? () => onTableNameUpdate(tableName, spaceTable)
-            : async () => {
-              await onCreateTable(tableName, space.ref)
-              console.log(tableName, space.ref)
-            }
+            table
+            ? () => onTableNameUpdate(tableName, table)
+            : () => onCreateNewTable()
           }>
             Salvar
           </button>
@@ -161,42 +144,45 @@ export function TableCreation({
       :
         <h3>{tableName}</h3>
       }
+
       <table>
-        <thead>
-          <tr>
-            {tableColumnsState?.map(column => (
-              <th key={column.columnname}>
-                {column.columnname}
-              </th>
-            ))}
+        {table && 
+          <thead>
+            <tr>
+              {tableColumnsState?.map(column => (
+                <th key={column.ref}>
+                  {column.columnName}
+                </th>
+              ))}
 
-            {/* Fixed THeads */}
-            <th  
-              className={styles.creation}
-            >
-              <button 
-                onClick={() => setIsNewColumnConfigDialog(!isNewColumnConfigDialog)} 
+              {/* Fixed THeads */}
+              <th  
+                className={styles.creation}
               >
-                + {tableColumnsState?.length < 1 && 'Adicionar Coluna'}
-              </button>
+                <button 
+                  onClick={() => setIsNewColumnConfigDialog(!isNewColumnConfigDialog)} 
+                >
+                  + {tableColumnsState?.length < 1 && 'Adicionar Coluna'}
+                </button>
 
-              {/* Column Configuration */}
-              <DialogItem 
-                columnTypes={ColumnTypes}
-                isNewColumnConfigDialog={isNewColumnConfigDialog}
-                onSubmitNewColumn={(e) => onSubmitNewColumn(e)}
-                setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
-                styles={styles}
-              />
-            </th>
-            {tableColumnsState?.length < 1 && 
-              <th className={styles.empty}></th>
-            }
-            <th>
-              Açoes
-            </th>
-          </tr>
-        </thead>
+                {/* Column Configuration */}
+                <DialogItem 
+                  columnTypes={ColumnTypes}
+                  isNewColumnConfigDialog={isNewColumnConfigDialog}
+                  onSubmitNewColumn={(e) => onSubmitNewColumn(e, table, setTableColumnsState)}
+                  setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
+                  styles={styles}
+                />
+              </th>
+              {tableColumnsState?.length < 1 && 
+                <th className={styles.empty}></th>
+              }
+              <th>
+                Açoes
+              </th>
+            </tr>
+          </thead>
+        }
 
         <tbody>
           {tableDataState.map((item, index) => (
@@ -206,18 +192,18 @@ export function TableCreation({
               // onDragOver={(e) => onDragOverListReorder(e, index)}
             >
               {tableColumnsState?.map(column => (
-                <td key={column.columnname}>
-                  {item[column.columnname]?.type !== 'catalog' && item[column.columnname]?.type !== 'client' 
+                <td key={column.ref}>
+                  {item[column.columnName]?.type !== 'catalog' && item[column.columnName]?.type !== 'client' 
                     ?  
                     <input
-                      value={item[column.columnname].value}
+                      value={item[column.columnName].value}
                       checked={
-                        item[column.columnname].type === 'checkbox' 
-                        ? item[column.columnname].value 
+                        item[column.columnName].type === 'checkbox' 
+                        ? item[column.columnName].value 
                         : false
                       }
                       onChange={(e) => {
-                        const value = item[column.columnname].type === 'checkbox' 
+                        const value = item[column.columnName].type === 'checkbox' 
                         ? e.target.checked
                         : e.target.value 
 
@@ -228,9 +214,9 @@ export function TableCreation({
                         //   index
                         // })
                       }}
-                      type={column.columntype}
+                      type={column.columnType}
                     />
-                    : item[column.columnname].value
+                    : item[column.columnName].value
                   }
                 </td>
               ))}

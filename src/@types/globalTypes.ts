@@ -56,3 +56,8 @@ export type CookiesType = {
 export interface CustomStylesType {
   [className: string]: string;
 }
+
+export interface FullSpaceTablesType extends SpaceTableType {
+  columns: TableColumnType[],
+  data: TableDataType[]
+}

@@ -20,7 +20,7 @@ export async function onAccountConnect() {
   if (account.id) {
     redirect('/workspaces')
   } else {
-    return
+    return redirect('/')
   }
 }
 

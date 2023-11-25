@@ -1,15 +1,14 @@
 "use client"
-import { SpaceTableType, SpaceType } from "@/@types/globalTypes"
+import { FullSpaceTablesType, SpaceTableType, SpaceType } from "@/@types/globalTypes"
 import { HiOutlinePlus } from "react-icons/hi";
-import { TableCreation } from "@/components/TableCreation/TableCreation";
 import styles from "./page.module.scss";
 import { useState } from "react";
-import { fetchInstanceWithCookies } from "@/api/account-requests";
+import { SpaceTable } from "@/components/SpaceTable/SpaceTable";
 
 type SpacePageProps = {
   space: SpaceType,
   workspaceId: string,
-  spaceTables: SpaceTableType[]
+  spaceTables: FullSpaceTablesType[]
 }
 
 export default function SpacePageClient({
@@ -19,20 +18,13 @@ export default function SpacePageClient({
 }: SpacePageProps) {
   const [isCreateNewTable, setIsCreateNewTable] = useState(false)
 
-  const onCreateTable = async (tableName: string) => await fetchInstanceWithCookies('/table', {
-    method: 'POST',
-    body: JSON.stringify({
-      name: tableName
-    })
-  }) as SpaceTableType
-
   return (
     <>
       <h1 className={styles.pageTitle}>
         {space.name} 
         <button 
           className={styles.button}
-          onClick={() => setIsCreateNewTable(true)}
+          onClick={() => setIsCreateNewTable(!isCreateNewTable)}
         >
           <HiOutlinePlus />
         </button>
@@ -40,13 +32,14 @@ export default function SpacePageClient({
       </h1>
       <section>
         {isCreateNewTable && 
-          <TableCreation 
-            isNewTable={isCreateNewTable} 
+          <SpaceTable 
+            spaceTable={{} as FullSpaceTablesType}
             space={space}
+            onTableCreateFinish={() => setIsCreateNewTable(false)}
           />
         }
         {spaceTables.map((table) => (
-          <TableCreation 
+          <SpaceTable 
             key={table.ref}
             space={space}
             spaceTable={table}
