@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
 import { FullSpaceTablesType, SpaceTableType, SpaceType, TableColumnType } from '@/@types/globalTypes';
-import styles from '../TableCreation/tablecreation.module.scss'
+import styles from './tablecreation.module.scss'
 import { 
   onSubmitNewColumn, 
 } from './utils/table-handler';
