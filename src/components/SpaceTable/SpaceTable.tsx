@@ -5,10 +5,7 @@ import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
 import { FullSpaceTablesType, SpaceTableType, SpaceType, TableColumnType } from '@/@types/globalTypes';
 import styles from '../TableCreation/tablecreation.module.scss'
-
 import { 
-  getAllColumnsFromTable, 
-  getAllDataFromTable, 
   onSubmitNewColumn, 
 } from './utils/table-handler';
 import { DialogItem } from './TableItems/Dialog';
@@ -93,10 +90,10 @@ export function SpaceTable({
     setTableDataState(formated)
   }, [])
 
-  useEffect(() => {
-    console.log("tableDataState", JSON.stringify(tableDataState))
-    console.log("tableColumnsState", JSON.stringify(tableColumnsState))
-  }, [tableDataState])
+  // useEffect(() => {
+  //   console.log("tableDataState", JSON.stringify(tableDataState))
+  //   console.log("tableColumnsState", JSON.stringify(tableColumnsState))
+  // }, [tableDataState])
 
   return (
     <section className={styles.Content}>

@@ -1,5 +1,5 @@
 "use client"
-import { FullSpaceTablesType, SpaceTableType, SpaceType } from "@/@types/globalTypes"
+import { FullSpaceTablesType, SpaceType } from "@/@types/globalTypes"
 import { HiOutlinePlus } from "react-icons/hi";
 import styles from "./page.module.scss";
 import { useState } from "react";

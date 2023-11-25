@@ -1,11 +1,6 @@
 import { fetchInstanceWithCookies } from "@/api/account-requests";
-import {  SpaceTableType, SpaceType, TableColumnType, TableDataType } from "@/@types/globalTypes";
+import { FullSpaceTablesType,  SpaceType } from "@/@types/globalTypes";
 import SpacePageClient from "./page.client";
-
-interface FullSpaceTables extends SpaceTableType {
-  columns: TableColumnType[],
-  data: TableDataType
-}
 
 export default async function SpacePage({
   params
@@ -39,7 +34,7 @@ export default async function SpacePage({
     method: 'GET'
   })
 
-  const spaceTables: FullSpaceTables[] = await spaceTableComplete.json()
+  const spaceTables: FullSpaceTablesType[] = await spaceTableComplete.json()
 
   return (
     <>
