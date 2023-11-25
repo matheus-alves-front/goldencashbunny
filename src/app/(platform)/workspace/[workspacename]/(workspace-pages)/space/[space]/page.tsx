@@ -30,7 +30,7 @@ export default async function SpacePage({
     )
   }
 
-  const spaceTableComplete = await fetch(`http://localhost:3000/api/tables?spaceRef=${space.ref}`, {
+  const spaceTableComplete = await fetch(`${process.env.NEXT_API_URL}/api/tables?spaceRef=${space.ref}`, {
     method: 'GET'
   })
 
