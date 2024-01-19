@@ -47,20 +47,24 @@ export function WorkspacesClientPage({
   return (
     <>
      <section className={styles.Section}>
-        {workspaces.map((workspace) => (
-          <Link 
-            key={workspace.id}
-            className={styles.workspacesButton}
-            onClick={() => setCookies(xgoldentoken, workspace.id)}
-            href={`workspace/${workspace.id}/dashboard`} 
-          >
-            <span>{workspace.companyname} Workspace</span>
-            <span>{workspace.socialcompanyname}</span>
-            <span>{workspace.cnpj}</span>
-            <IoAlbums className={styles.Icon} />
-          </Link>
-        ))}
-        {isNewWorkspace 
+      {workspaces.length ? 
+        <>
+          {workspaces.map((workspace) => (
+            <Link 
+              key={workspace.id}
+              className={styles.workspacesButton}
+              onClick={() => setCookies(xgoldentoken, workspace.id)}
+              href={`workspace/${workspace.id}/dashboard`} 
+            >
+              <span>{workspace.companyname} Workspace</span>
+              <span>{workspace.socialcompanyname}</span>
+              <span>{workspace.cnpj}</span>
+              <IoAlbums className={styles.Icon} />
+            </Link>
+          ))}
+        </>
+      : null}
+      {isNewWorkspace 
         ? 
           <form 
             onSubmit={onCreateWorkspace}
