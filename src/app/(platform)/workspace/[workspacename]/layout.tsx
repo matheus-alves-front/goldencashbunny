@@ -4,7 +4,7 @@ import '../../../../styles/platform-globals.scss'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
 import { Open_Sans } from 'next/font/google'
 import { getAllCookies } from '@/api/on-connects'
-import { fetchInstance, setCookies } from '@/api/account-requests'
+import { fetchInstance, setCookies } from '@/api/fetchInstances'
 import { AccountType, CookiesType, WorkspaceType } from '@/@types/globalTypes'
 
 export const metadata = {

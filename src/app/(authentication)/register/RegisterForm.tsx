@@ -1,8 +1,10 @@
 "use client"
 import { FormEvent } from 'react'
 import styles from './page.module.scss'
-import { fetchInstance, setCookies } from '@/api/account-requests'
+import { fetchInstance } from '@/api/fetchInstances'
 import { useRouter } from 'next/navigation'
+import { AccountType } from '@/@types/globalTypes'
+import { setCookies } from '@/hooks/useTokenCookies'
 
 export function RegisterForm({...rest}) {
   const router = useRouter()
@@ -14,21 +16,56 @@ export function RegisterForm({...rest}) {
     const username = target.elements.namedItem("username") as HTMLInputElement;
     const email = target.elements.namedItem("email") as HTMLInputElement;
     const password = target.elements.namedItem("password") as HTMLInputElement;
+    const cpf = target.elements.namedItem("cpf") as HTMLInputElement;
+    const cnpj = target.elements.namedItem("cnpj") as HTMLInputElement;
 
-    const registerData = JSON.stringify({
-      username: username.value,
+    let registerData: {
+      userName: string,
+      email: string,
+      password: string,
+      cnpj?: string,
+      cpf?: string
+    } = {
+      userName: username.value,
       email: email.value,
-      password: password.value
-    })
+      password: password.value,
+    }
 
-    const request = await fetchInstance('/account', {
+    if (cpf.value) {
+      registerData = {
+        ...registerData,  
+        cpf: cpf.value,
+      }
+    } 
+    if (cnpj.value) {
+      registerData = {
+        ...registerData,  
+        cpf: cnpj.value,
+      }
+    }
+
+    const createAccount: AccountType = await fetchInstance('/account', {
       method: 'POST',
-      body: registerData
+      body: JSON.stringify(registerData)
     })
 
-    setCookies(request.id, '')
 
-    router.push('/workspaces')
+    const credentialsLogin = {
+      login: createAccount.email,
+      password: password.value
+    }
+
+    const request: {accessToken: string} = await fetchInstance('/auth', {
+      method: 'POST',
+      body: JSON.stringify(credentialsLogin)
+    })
+
+    if (request.accessToken) {
+      setCookies(request.accessToken, '')
+      router.push('/workspaces')
+    } else {
+      // tratar erro
+    }
   }
 
   return (
@@ -52,6 +89,16 @@ export function RegisterForm({...rest}) {
           type="password"
           placeholder='Confirme sua senha'
           name='confirmpassword' 
+        />
+        <input 
+          type="number" 
+          placeholder='CPF'
+          name='cpf'
+        />
+        <input 
+          type="number" 
+          placeholder='CNPJ'
+          name='cnpj'
         />
         <fieldset>
           <input  

@@ -1,7 +1,8 @@
-import { onAccountConnect } from '@/api/on-connects'
 import '../../styles/globals.scss'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { useAccountJWT } from '@/hooks/useAccountJWT'
+import { redirect } from 'next/navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,7 +16,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  await onAccountConnect()
+  const account = await useAccountJWT()
+
+  if (account) {
+    return redirect('/workspaces')
+  }
 
   return (
     <html lang="br">

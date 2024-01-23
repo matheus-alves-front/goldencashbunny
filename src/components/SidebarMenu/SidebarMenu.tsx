@@ -8,7 +8,7 @@ import {
   MdOutlineMoneyOffCsred 
 } from "react-icons/md";
 import { CookiesType, SpaceType, WorkspaceType } from '@/@types/globalTypes';
-import { fetchInstanceWithCookies } from '@/api/account-requests';
+import { fetchInstanceWithCookies } from '@/api/fetchInstances';
 import Link from 'next/link';
 
 const DASHBOARDS = [

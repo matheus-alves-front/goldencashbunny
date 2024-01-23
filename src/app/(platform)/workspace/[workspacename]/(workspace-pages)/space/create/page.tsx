@@ -1,5 +1,5 @@
 "use client"
-import { fetchInstanceWithCookies } from "@/api/account-requests";
+import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import styles from './page.module.scss';

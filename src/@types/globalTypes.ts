@@ -1,9 +1,21 @@
+import { JwtPayload } from "jsonwebtoken"
+
 export type AccountType = {
   id: string,
   username: string,
   email: string,
   password: string,
   creationDate: string
+}
+
+export interface JWTAccountType extends JwtPayload {
+  iss: string,
+  sub: string,
+  exp: number,
+  id: string,
+  roles: string[],
+  cpf: string | null,
+  cnpj: string | null
 }
 
 export type WorkspaceType = {

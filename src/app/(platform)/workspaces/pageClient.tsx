@@ -4,8 +4,9 @@ import { WorkspaceType } from "@/@types/globalTypes"
 import styles from './page.module.scss'
 import Link from "next/link"
 import { IoAlbums } from "react-icons/io5"
-import { fetchInstance, setCookies } from "@/api/account-requests"
+import { fetchInstance } from "@/api/fetchInstances"
 import { useRouter } from "next/navigation"
+import { setCookies } from "@/hooks/useTokenCookies"
 
 export function WorkspacesClientPage({
   workspaces,

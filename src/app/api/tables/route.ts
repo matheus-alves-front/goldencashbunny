@@ -1,5 +1,5 @@
 import { SpaceTableType, TableColumnType, TableDataType } from "@/@types/globalTypes";
-import { fetchInstanceWithCookies } from "@/api/account-requests";
+import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)

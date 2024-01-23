@@ -1,6 +1,6 @@
 "use server"
 import { cookies } from "next/headers";
-import { fetchInstance } from "./account-requests";
+import { fetchInstance } from "./fetchInstances";
 import { redirect } from "next/navigation";
 import { AccountType } from "@/@types/globalTypes";
 
@@ -23,17 +23,3 @@ export async function onAccountConnect() {
     return redirect('/')
   }
 }
-
-export async function getAllCookies() {
-  const cookie = cookies()
-
-  const xgoldentoken = cookie.get('xgoldentoken')  
-  const xgoldenworkspace = cookie.get('xgoldenworkspace')
-
-  const goldenCookies = {
-    xgoldentoken: xgoldentoken?.value,
-    xgoldenworkspace: xgoldenworkspace?.value
-  }
-
-  return goldenCookies
-} 

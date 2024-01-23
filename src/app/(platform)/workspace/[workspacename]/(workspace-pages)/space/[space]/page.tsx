@@ -1,4 +1,4 @@
-import { fetchInstanceWithCookies } from "@/api/account-requests";
+import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 import { FullSpaceTablesType,  SpaceType } from "@/@types/globalTypes";
 import SpacePageClient from "./page.client";
 

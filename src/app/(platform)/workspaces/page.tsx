@@ -1,25 +1,22 @@
 import { WorkspaceType } from "@/@types/globalTypes"
-import { fetchInstance } from "@/api/account-requests"
 import { cookies } from "next/headers"
-import styles from './page.module.scss'
 import { redirect } from "next/navigation"
+import { fetchInstanceWithCookies} from "@/api/fetchInstances"
+import { useAccountJWT } from "@/hooks/useAccountJWT"
 import { WorkspacesClientPage } from "./pageClient"
+import styles from './page.module.scss'
 
 export default async function WorkspacesPage() {
   const cookie = cookies()
 
   const xgoldentoken = cookie.get('xgoldentoken')
+  const account = await useAccountJWT()
 
-  const workspaces: WorkspaceType[] = await fetchInstance('/workspace', {
-    headers: {
-      "xgoldentoken": xgoldentoken ? xgoldentoken.value : ''
-    }
-  })
-
-  // @ts-ignore
-  if (!workspaces || workspaces.error) {
-    redirect('register')
+  if (!account) {
+    return redirect('/')
   }
+
+  const workspaces: WorkspaceType[] = await fetchInstanceWithCookies(`/workspace/account/${account.id}`, {})
 
   return (
     <main className={styles.Main}>

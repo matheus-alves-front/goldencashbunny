@@ -1,3 +1,4 @@
+import { LoginForm } from './LoginForm'
 import styles from './page.module.scss'
 
 export const metadata = {
@@ -24,31 +25,7 @@ export default function Home() {
         <div className={styles.formDiv}>
           <h2>Login</h2>
           <h3>Entre com seu E-mail e senha para logar.</h3>
-          <form action="">
-            <label htmlFor="email">Email</label>
-            <input 
-              type="email"
-              placeholder='Email' 
-              name='email' 
-            />
-            <label htmlFor="password">Senha</label>
-            <input 
-              type="password"
-              placeholder='Senha'
-              name='password' 
-            />
-            <fieldset>
-              <input  
-                name='remember'
-                className={styles.checkbox} 
-                type="checkbox" 
-              />
-              <span>Lembrar credênciais</span>
-            </fieldset>
-            <button type='submit'>
-              Entrar
-            </button>
-          </form>
+          <LoginForm />
           <p className={styles.alreadyHave}>Ainda não possui uma conta? <a href="/register">Registre-se aqui.</a></p>
         </div>
       </section>
