@@ -25,21 +25,24 @@ export async function fetchInstanceWithCookies(
   route: string,
   params: globalThis.RequestInit
 ) {
-  console.log(`Fetch to: ${API_URL}${route}`)
-  const { xgoldentoken } = await getAllCookies()
+  try {
+    const { xgoldentoken } = await getAllCookies()
 
-  const fetchRequest = await fetch(`${API_URL}${route}`, {
-    ...params,
-    headers: {
-      "Content-Type": 'application/json',
-      "Authorization": `Bearer ${xgoldentoken}`,
-      ...params.headers
-    },
-  })
-
-  const fetchJson = await fetchRequest.json()
-
-  return fetchJson
+    const fetchRequest = await fetch(`${API_URL}${route}`, {
+      ...params,
+      headers: {
+        "Content-Type": 'application/json',
+        "Authorization": `Bearer ${xgoldentoken}`,
+        ...params.headers
+      },
+    })
+  
+    const fetchJson = await fetchRequest.json()
+  
+    return fetchJson
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 

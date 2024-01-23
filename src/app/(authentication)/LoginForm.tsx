@@ -1,8 +1,9 @@
 "use client"
 
-import { fetchInstance, setCookies } from "@/api/fetchInstances";
+import { fetchInstance } from "@/api/fetchInstances";
 import { FormEvent } from "react";
 import { useRouter } from 'next/navigation'
+import { setCookies } from "@/hooks/useTokenCookies";
 
 export function LoginForm() {
   const router = useRouter()

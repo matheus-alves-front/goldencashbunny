@@ -7,7 +7,7 @@ import {
   MdOutlineAttachMoney, 
   MdOutlineMoneyOffCsred 
 } from "react-icons/md";
-import { CookiesType, SpaceType, WorkspaceType } from '@/@types/globalTypes';
+import { SpaceType, WorkspaceType } from '@/@types/globalTypes';
 import { fetchInstanceWithCookies } from '@/api/fetchInstances';
 import Link from 'next/link';
 
@@ -18,13 +18,11 @@ const DASHBOARDS = [
 
 export async function SidebarMenu({
   workspace,
-  cookies
 }: {
   workspace: WorkspaceType,
-  cookies: CookiesType
 }) {
   
-  const spaces: SpaceType[] = await fetchInstanceWithCookies('/space', {
+  const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspace.id}/spaces`, {
     method: 'GET'  
   })
 
@@ -58,7 +56,7 @@ export async function SidebarMenu({
         {spaces.map((space, index) => (
           <a 
             key={index} 
-            href={`/workspace/${space.workspaceId}/space/${space.ref}`}
+            href={`/workspace/${workspace.id}/space/${space.id}`}
           >
             {space.name 
               ? <MdOutlineAttachMoney className={styles.icon} /> 

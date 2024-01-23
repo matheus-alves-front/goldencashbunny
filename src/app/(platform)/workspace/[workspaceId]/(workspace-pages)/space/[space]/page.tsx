@@ -7,20 +7,23 @@ export default async function SpacePage({
 }: {
   params: { 
     space: string,
-    workspacename: string  
+    workspaceId: string  
   }
 }) {
   const {
-    workspacename: workspaceId,
+    workspaceId ,
     space: spaceId
   } = params
 
-  const space: SpaceType = await fetchInstanceWithCookies(`/space/${spaceId}`, {
+  const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
     method: 'GET'
   })
 
+  const space = spaces.find(space => space.id === spaceId)
+
+  console.log(space)
   // @ts-ignore 
-  if (!space || space.error) {
+  if (!space) {
     return (
       <>
         <h1>Alguma coisa deu errado...</h1>
@@ -30,19 +33,19 @@ export default async function SpacePage({
     )
   }
 
-  const spaceTableComplete = await fetch(`${process.env.NEXT_API_URL}/api/tables?spaceRef=${space.ref}`, {
-    method: 'GET'
-  })
+  // const spaceTableComplete = await fetch(`${process.env.NEXT_API_URL}/api/tables?spaceRef=${space.id}`, {
+  //   method: 'GET'
+  // })
 
-  const spaceTables: FullSpaceTablesType[] = await spaceTableComplete.json()
+  // const spaceTables: FullSpaceTablesType[] = await spaceTableComplete.json()
 
   return (
     <>
-      <SpacePageClient 
+      {/* <SpacePageClient 
         space={space}
         workspaceId={workspaceId}
         spaceTables={spaceTables}
-      />
+      /> */}
     </>
   )
 }

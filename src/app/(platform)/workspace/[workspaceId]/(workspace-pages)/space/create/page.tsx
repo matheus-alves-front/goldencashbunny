@@ -3,8 +3,16 @@ import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import styles from './page.module.scss';
+import { SpaceType } from "@/@types/globalTypes";
 
-export default function SpaceCreatePage() {
+export default function SpaceCreatePage({
+  params
+}: {
+  params: {
+    workspaceId: string
+  }
+}) {
+  const { workspaceId } = params
   const router = useRouter()
 
   const onCreateSpace = async (e: FormEvent<HTMLFormElement>) => {
@@ -14,16 +22,15 @@ export default function SpaceCreatePage() {
 
     const name = target.elements.namedItem("name") as HTMLInputElement;
 
-    const postSpace = await fetchInstanceWithCookies('/space', {
+    const postSpace: SpaceType = await fetchInstanceWithCookies(`/workspace/${workspaceId}/space`, {
       method: 'POST',
       body: JSON.stringify({
         name: name.value
       })
     }) 
 
-    if (!postSpace.error) {
-      router.refresh()
-      router.back()
+    if (postSpace) {
+      router.push(`${postSpace.id}`)
     }
   }
 

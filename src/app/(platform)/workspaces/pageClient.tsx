@@ -1,21 +1,22 @@
 "use client"
-import { FormEvent, useState } from "react"
-import { WorkspaceType } from "@/@types/globalTypes"
+import { FormEvent, useContext, useState } from "react"
+import { JWTAccountType, WorkspaceType } from "@/@types/globalTypes"
 import styles from './page.module.scss'
 import Link from "next/link"
 import { IoAlbums } from "react-icons/io5"
-import { fetchInstance } from "@/api/fetchInstances"
+import { fetchInstanceWithCookies } from "@/api/fetchInstances"
 import { useRouter } from "next/navigation"
-import { setCookies } from "@/hooks/useTokenCookies"
+import { ActualWorkspaceContext } from "@/contexts/ActualWorkspaceContext"
 
 export function WorkspacesClientPage({
   workspaces,
-  xgoldentoken
+  account
 }: {
   workspaces: WorkspaceType[],
-  xgoldentoken: string
+  account: JWTAccountType
 }) {
   const router = useRouter()
+  const { UpdateActiveWorkspace } = useContext(ActualWorkspaceContext)
   const [isNewWorkspace, setIsNewWorkspace] = useState(false)
 
   const onCreateWorkspace = async (e: FormEvent<HTMLFormElement>) => {
@@ -25,19 +26,14 @@ export function WorkspacesClientPage({
 
     const companyname = target.elements.namedItem("companyname") as HTMLInputElement;
     const socialcompanyname = target.elements.namedItem("socialcompanyname") as HTMLInputElement;
-    const cnpj = target.elements.namedItem("cnpj") as HTMLInputElement;
 
     const bodyRequest = {
-      companyname: companyname.value,
-      socialcompanyname: socialcompanyname.value,
-      cnpj: Number(cnpj.value)
+      companyName: companyname.value,
+      socialCompanyName: socialcompanyname.value
     }
 
-    await fetchInstance('/workspace', {
+    await fetchInstanceWithCookies(`/workspace/account/${account.id}`, {
       method: 'POST',
-      headers: {
-        "xgoldentoken": xgoldentoken
-      },
       body: JSON.stringify(bodyRequest)
     })
 
@@ -54,12 +50,11 @@ export function WorkspacesClientPage({
             <Link 
               key={workspace.id}
               className={styles.workspacesButton}
-              onClick={() => setCookies(xgoldentoken, workspace.id)}
+              onClick={() => UpdateActiveWorkspace(workspace)}
               href={`workspace/${workspace.id}/dashboard`} 
             >
-              <span>{workspace.companyname} Workspace</span>
-              <span>{workspace.socialcompanyname}</span>
-              <span>{workspace.cnpj}</span>
+              <span>{workspace.companyName} Workspace</span>
+              <span>{workspace.socialCompanyName}</span>
               <IoAlbums className={styles.Icon} />
             </Link>
           ))}

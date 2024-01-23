@@ -2,10 +2,11 @@ import { JwtPayload } from "jsonwebtoken"
 
 export type AccountType = {
   id: string,
-  username: string,
+  userName: string,
   email: string,
-  password: string,
-  creationDate: string
+  roles: string[],
+  cpf: string | null,
+  cnpj: string | null
 }
 
 export interface JWTAccountType extends JwtPayload {
@@ -20,17 +21,16 @@ export interface JWTAccountType extends JwtPayload {
 
 export type WorkspaceType = {
   id: string,
-  cnpj: number,
-  companyname: string,
-  socialcompanyname: string,
-  accountId: string
+  favorite: boolean,
+  companyName: string,
+  socialCompanyName: string,
 }
 
 export type SpaceType = {
-  ref: string,
+  id: string,
   name: string,
-  creationDate: string,
-  workspaceId: string, 
+  tables: SpaceTableType[],
+  favorite: boolean, 
 }
 
 export type SpaceTableType = {
