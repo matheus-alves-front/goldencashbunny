@@ -102,7 +102,7 @@ export function SpaceTable({
         isInputName={!spaceTable.name}
         onSuccessSubmit={() => onCreateNewTable()}
         table={spaceTable}
-        spaceRef={space.ref}
+        spaceRef={space.id}
       />
 
       {spaceTable && 
