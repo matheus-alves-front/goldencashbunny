@@ -1,5 +1,5 @@
 "use client"
-import { FullSpaceTablesType, SpaceType } from "@/@types/globalTypes"
+import { FullSpaceTablesType, SpaceTableType, SpaceType } from "@/@types/globalTypes"
 import { HiOutlinePlus } from "react-icons/hi";
 import styles from "./page.module.scss";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { SpaceTable } from "@/components/SpaceTable/SpaceTable";
 type SpacePageProps = {
   space: SpaceType,
   workspaceId: string,
-  spaceTables: FullSpaceTablesType[]
+  spaceTables: SpaceTableType[]
 }
 
 export default function SpacePageClient({
@@ -40,7 +40,7 @@ export default function SpacePageClient({
         }
         {spaceTables.map((table) => (
           <SpaceTable 
-            key={table.ref}
+            key={table.id}
             space={space}
             spaceTable={table}
           /> 

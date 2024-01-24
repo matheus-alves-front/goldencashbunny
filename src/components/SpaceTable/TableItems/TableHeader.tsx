@@ -1,7 +1,7 @@
 "use client"
 import { SpaceTableType } from "@/@types/globalTypes"
 import { onCreateTable, onTableNameUpdate } from "@/components/SpaceTable/utils/table-handler"
-import { AllHTMLAttributes, BaseHTMLAttributes, useEffect, useState } from "react"
+import { BaseHTMLAttributes, useEffect, useState } from "react"
 
 interface TableHeaderProps extends BaseHTMLAttributes<HTMLHeadingElement> {
   isInputName: boolean,
@@ -20,13 +20,12 @@ export function TableHeader({
   const [tableName, setTableName] = useState('')
 
   const onSubmitSpaceTable = async () => {
-    console.log("isInputName", isInputName)
     if (isInputName || !tableName) {
       await onCreateTable(tableName, spaceRef)
       
       onSuccessSubmit()
     } else {
-      await onTableNameUpdate(tableName, table.ref)
+      await onTableNameUpdate(tableName, table.id)
     }
   }
 

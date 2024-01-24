@@ -34,26 +34,24 @@ export type SpaceType = {
 }
 
 export type SpaceTableType = {
-  ref: string,
+  id: string,
   name: string,
-  creationDate: string,
-  spaceRef: string, 
+  columns: TableColumnType[]
 }
 
 export type TableColumnType = {
-  ref: string,
-  columnName: string,
+  id: string,
+  name: string,
+  columnReference: number,
   columnType: string,
-  spaceTableRef: string, 
+  rows: TableDataType[], 
 }
 
+
 export type TableDataType = {
-  ref: string,
-  columnName: string,
-  value: string,
-  type: string,
-  creationDate: string,
-  spaceTableRef: string, 
+  id: string,
+  rowValue: string,
+  rowReference: number
 }
 
 export type ErrorType = {

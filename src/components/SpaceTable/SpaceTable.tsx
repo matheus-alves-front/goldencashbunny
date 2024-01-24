@@ -1,30 +1,32 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
+import { SpaceTableType, SpaceType, TableColumnType } from '@/@types/globalTypes';
 import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
-import { FullSpaceTablesType, SpaceTableType, SpaceType, TableColumnType } from '@/@types/globalTypes';
-import styles from './tablecreation.module.scss'
 import { 
-  onSubmitNewColumn, 
+  onSubmitCreateRowValue,
+  onSubmitNewColumn,
+  onSubmitUpdateRowValue, 
 } from './utils/table-handler';
 import { DialogItem } from './TableItems/Dialog';
 import { TableHeader } from './TableItems/TableHeader';
 import { THead } from './TableItems/THead';
-import { FormattedTableData, formatTableData } from './utils/tableDataFormat';
+import { transformTableData } from './utils/tableDataFormat';
+import styles from './tablecreation.module.scss'
 
 const ColumnTypes = [
-  'text',
-  'number',
-  'checkbox',
-  'date',
-  'file',
-  'client',
-  'catalog'
+  'TEXT',
+  'NUMBER',
+  'CHECKBOX',
+  'DATE',
+  'FILE',
+  'CLIENT',
+  'CATALOG'
 ]
 
 type TableCreationProps = {
-  spaceTable: FullSpaceTablesType,
+  spaceTable: SpaceTableType,
   space: SpaceType,
   onTableCreateFinish?: () => void,
 }
@@ -35,39 +37,48 @@ export function SpaceTable({
   onTableCreateFinish
 }: TableCreationProps) {
   const router = useRouter()
-  const [table, setTable] = useState<SpaceTableType>({} as SpaceTableType)
-
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false)
+  const [spaceTableState, setSpaceTableState] = useState(spaceTable)
+  const [editRowReference, setEditRowReference] = useState<number | null>(null)
 
-  const [tableDataState, setTableDataState] = useState<FormattedTableData[]>([])
-  const [tableColumnsState, setTableColumnsState] = useState<TableColumnType[]>([])
   
   const onCreateNewTable = async () => {
     onTableCreateFinish && onTableCreateFinish()
     router.refresh()
   }
-  //   value,
-  //   column,
-  //   item,
-  //   index
-  // }: {
-  //   value: string | boolean,
-  //   column: ColumnConfig,
-  //   item: TableDataConfig,
-  //   index: number
-  // }) => {
-  //   // console.log("valores parametros", {
-  //   //   value,
-  //   //   column,
-  //   //   item,
-  //   //   index
-  //   // })
-  //   const newTableDataState = [...tableDataState];
-  //   newTableDataState[index][column.columnname].value = value
-  //   console.log('newTableDataState[index]', newTableDataState[index][column.columnname].value)
 
-  //   setTableDataState(newTableDataState)
-  // }
+  const onCreateNewColumn = async (e: FormEvent<HTMLFormElement>) => {
+    const responseNewTableData = await onSubmitNewColumn(e, spaceTable)
+
+    
+    setSpaceTableState(responseNewTableData)
+    // router.refresh()
+  }
+
+  const onUpdateColumnRow = async (
+    rowValue: string | boolean,
+    tableRowId: string
+  ) => {
+    const responseNewTableData = await onSubmitUpdateRowValue(String(rowValue), tableRowId)
+
+    setSpaceTableState(responseNewTableData)
+    setEditRowReference(null)
+    // router.refresh()
+
+  }
+
+  const onCreateNewColumnRow = async (
+    value: string | boolean,
+    tableColumnId: string,
+    rowReference: number
+  ) => {
+    const responseNewTableData = await onSubmitCreateRowValue(String(value), tableColumnId, rowReference)
+
+
+    setEditRowReference(null)
+    setSpaceTableState(responseNewTableData)
+    // router.refresh()
+  }
 
   // const onDragStartListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
   //   e.dataTransfer.setData('index', index.toString());
@@ -83,17 +94,8 @@ export function SpaceTable({
   // };
 
   useEffect(() => {
-    if (!spaceTable.ref) return
-    setTable(spaceTable)
-    setTableColumnsState(spaceTable.columns)
-    const formated = formatTableData(spaceTable.data)
-    setTableDataState(formated)
+    setSpaceTableState(spaceTable)
   }, [])
-
-  // useEffect(() => {
-  //   console.log("tableDataState", JSON.stringify(tableDataState))
-  //   console.log("tableColumnsState", JSON.stringify(tableColumnsState))
-  // }, [tableDataState])
 
   return (
     <section className={styles.Content}>
@@ -105,36 +107,36 @@ export function SpaceTable({
         spaceRef={space.id}
       />
 
-      {spaceTable && 
+      {spaceTableState && 
         <table>
           <THead>
             <tr>
-              {tableColumnsState?.map(column => (
-                <th key={column.ref}>
-                  {column.columnName}
+              {spaceTableState.columns?.map(column => (
+                <th key={column.id}>
+                  {column.name}
                 </th>
               ))}
 
-              {/* Fixed THeads */}
+              {/* FIXED COLUMNS */}
               <th  
                 className={styles.creation}
               >
                 <button 
                   onClick={() => setIsNewColumnConfigDialog(!isNewColumnConfigDialog)} 
                 >
-                  + {tableColumnsState?.length < 1 && 'Adicionar Coluna'}
+                  + {spaceTableState.columns?.length < 1 && 'Adicionar Coluna'}
                 </button>
 
                 {/* Column Configuration */}
                 <DialogItem 
                   columnTypes={ColumnTypes}
                   isNewColumnConfigDialog={isNewColumnConfigDialog}
-                  onSubmitNewColumn={(e) => onSubmitNewColumn(e, spaceTable, setTableColumnsState)}
+                  onSubmitNewColumn={(e) => onCreateNewColumn(e)}
                   setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
                   styles={styles}
                 />
               </th>
-              {tableColumnsState?.length < 1 && 
+              {spaceTableState.columns?.length < 1 && 
                 <th className={styles.empty}></th>
               }
               <th>
@@ -144,42 +146,60 @@ export function SpaceTable({
           </THead>
 
           <tbody>
-            {tableDataState?.map((itemData, index) => (
-              <tr key={index} 
-                draggable
-                // onDragStart={(e) => onDragStartListReorder(e, index)}
-                // onDragOver={(e) => onDragOverListReorder(e, index)}
-              >
-                {tableColumnsState?.map(column => (
-                  <td key={column.ref}>
-                    {itemData[column.columnName]?.type !== 'catalog' && itemData[column.columnName]?.type !== 'client' 
-                      ?  
+            {transformTableData(spaceTableState).map((row) => (
+              <tr key={row.id} onClick={() => setEditRowReference(row.rowReference)}>
+                {row.columns.map((column, index) => (
+                  <Fragment key={index}>
+                    {column.rowValue 
+                    ? 
+                      <>
+                        {editRowReference !== row.rowReference 
+                          ? 
+                            <td>
+                              {column.rowValue}
+                            </td>
+                          :
+                          <td>
+                            <input
+                              onChange={(e) => {
+                                const value = column.columnType === 'CHECKBOX' 
+                                ? e.target.checked
+                                : e.target.value 
+      
+                                onUpdateColumnRow(value, row.id)
+                              }}
+                              type={column.columnType.toLowerCase()}
+                            />
+                          </td>
+                          }
+                      </>
+                    : 
+                    <td>
                       <input
                         onChange={(e) => {
-                          const value = itemData[column.columnName].type === 'checkbox' 
+                          const value = column.columnType === 'CHECKBOX' 
                           ? e.target.checked
                           : e.target.value 
+
+                          onCreateNewColumnRow(value, column.columnId, row.rowReference)
+                          // onUpdateRow(e, column.columnId, row.rowReference)
                         }}
                         type={column.columnType}
                       />
-                      : itemData[column.columnName].value
+                    </td>
                     }
-                  </td>
+                  </Fragment>
                 ))}
-
-                {/* Fixed Columns */}
+                {/* FIXED COLUMNS */}
                 <td className={styles.creation}>
                 </td>
-                {/* {tableColumnsState?.length < 1 && 
-                  <td className={styles.empty}></td>
-                } */}
                 <td className={styles.actions}>
                   <button>Detalhes</button>
                   <button className={styles.exclude}>
                     <PiTrashBold 
                     />
                   </button>
-                  
+                    
                   <TfiArrowsVertical 
                     className={styles.reorder}
                   />

@@ -50,7 +50,7 @@ export function WorkspacesClientPage({
             <Link 
               key={workspace.id}
               className={styles.workspacesButton}
-              onClick={() => UpdateActiveWorkspace(workspace)}
+              // onClick={() => UpdateActiveWorkspace(workspace)}
               href={`workspace/${workspace.id}/dashboard`} 
             >
               <span>{workspace.companyName} Workspace</span>

@@ -21,7 +21,7 @@ export default async function SpacePage({
 
   const space = spaces.find(space => space.id === spaceId)
 
-  console.log(space)
+  console.log("space server", space)
   // @ts-ignore 
   if (!space) {
     return (
@@ -41,11 +41,11 @@ export default async function SpacePage({
 
   return (
     <>
-      {/* <SpacePageClient 
+      <SpacePageClient 
         space={space}
         workspaceId={workspaceId}
-        spaceTables={spaceTables}
-      /> */}
+        spaceTables={space.tables}
+      />
     </>
   )
 }

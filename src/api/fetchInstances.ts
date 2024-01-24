@@ -39,6 +39,10 @@ export async function fetchInstanceWithCookies(
   
     const fetchJson = await fetchRequest.json()
   
+    if (!fetchJson) {
+      return fetchRequest
+    }
+
     return fetchJson
   } catch (error) {
     console.error(error)
