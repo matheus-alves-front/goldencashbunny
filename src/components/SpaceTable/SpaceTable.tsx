@@ -148,9 +148,22 @@ export function SpaceTable({
   }
 
   const onCreateNewColumn = async (e: FormEvent<HTMLFormElement>) => {
-    const responseNewTableData = await onSubmitNewColumn(e, spaceTable)
+    const responseNewTableData = await onSubmitNewColumn(e, spaceTableState)
 
     console.log(responseNewTableData)
+    const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
+      method: 'GET'
+    })
+  
+    const space = spaces.find(space => space.id === space.id)
+
+    const spaceTable = space?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
+    
+    if (!spaceTable) {
+      return
+    }
+
+    setSpaceTableState(spaceTable)
   }
 
   const onCreateNewColumnRow = async (
