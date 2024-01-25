@@ -8,33 +8,49 @@ export type FormattedRowsColumns = {
     columnReference: number,
     columnType: string,
     rowValue: string
+    rowId: string
   }[]
 };
 
 
-export function transformTableData(spaceTable: SpaceTableType): FormattedRowsColumns[] {
+export function transformTableData(spaceTable: SpaceTableType) {
   if (!spaceTable.columns || spaceTable.columns.length === 0) {
     return [];
   }
 
-  const numberOfRows = spaceTable.columns.reduce((max, column) => Math.max(max, column.rows.length), 0);
-  let allRows: FormattedRowsColumns[] = Array.from({ length: numberOfRows }, () => ({ id: '', rowReference: 0, columns: [] }));
+  // Inicializa o array de todas as linhas da tabela
+  let allRows = [] as FormattedRowsColumns[];
 
+  // Percorre cada coluna para acessar as linhas
   spaceTable.columns.forEach(column => {
-    for (let i = 0; i < numberOfRows; i++) {
-      const row = column.rows.find(r => r.rowReference === i);
-      allRows[i].columns[column.columnReference] = {
-        columnId: column.id,
-        columnType: column.columnType,
-        columnReference: column.columnReference,
-        rowValue: row ? row.rowValue : ''
-      };
-    }
-  });
+    column.rows.forEach(row => {
+      // Verifica se a linha já existe no array allRows
+      let existingRow = allRows.find(r => r.rowReference === row.rowReference);
 
-  allRows.forEach((row, index) => {
-    row.id = `row-${index}`; // Assumindo que você deseja um ID único para cada linha
-    row.rowReference = index;
+      if (existingRow) {
+        // Se a linha já existe, adiciona o valor da coluna atual
+        existingRow.columns.push({
+          columnId: column.id,
+          columnType: column.columnType,
+          columnReference: column.columnReference,
+          rowValue: row.rowValue,
+          rowId: row.id
+        });
+      } else {
+        // Se a linha não existe, cria uma nova linha
+        allRows.push({
+          id: String(row.rowReference),
+          rowReference: row.rowReference,
+          columns: [{
+            columnId: column.id,
+            columnType: column.columnType,
+            columnReference: column.columnReference,
+            rowValue: row.rowValue,
+            rowId: row.id
+          }]
+        });
+      }
+    });
   });
 
   return allRows;

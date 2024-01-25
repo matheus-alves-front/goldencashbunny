@@ -33,6 +33,7 @@ export default function SpacePageClient({
       <section>
         {isCreateNewTable && 
           <SpaceTable 
+            workspaceId={workspaceId}
             spaceTable={{} as FullSpaceTablesType}
             space={space}
             onTableCreateFinish={() => setIsCreateNewTable(false)}
@@ -40,6 +41,7 @@ export default function SpacePageClient({
         }
         {spaceTables.map((table) => (
           <SpaceTable 
+            workspaceId={workspaceId}
             key={table.id}
             space={space}
             spaceTable={table}
