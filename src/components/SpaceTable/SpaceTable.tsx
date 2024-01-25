@@ -12,7 +12,7 @@ import {
 import { DialogItem } from './TableItems/Dialog';
 import { TableHeader } from './TableItems/TableHeader';
 import { THead } from './TableItems/THead';
-import { transformTableData } from './utils/tableDataFormat';
+import { FormattedRowsColumns, transformTableData } from './utils/tableDataFormat';
 import styles from './tablecreation.module.scss'
 import { fetchInstanceWithCookies } from '@/api/fetchInstances';
 
@@ -45,6 +45,37 @@ export function SpaceTable({
 }: TableCreationProps) {
   const router = useRouter()
 
+  // Table
+  const [spaceTableState, setSpaceTableState] = useState(spaceTable)
+  const [tableRowColumns, setTableRowColumns] = useState<FormattedRowsColumns[]>([])
+
+  // Table Actions
+  const onCreateNewTable = async () => {
+    onTableCreateFinish && onTableCreateFinish()
+    router.refresh()
+  }
+
+  const onCreateNewColumn = async (e: FormEvent<HTMLFormElement>) => {
+    const responseNewTableData = await onSubmitNewColumn(e, spaceTableState)
+
+    console.log(responseNewTableData)
+    const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
+      method: 'GET'
+    })
+  
+    const actualSpace = spaces.find(spaceItem => spaceItem.id === space.id)
+
+    const spaceTable = actualSpace?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
+    
+    setIsNewColumnConfigDialog(false)
+
+    if (!spaceTable) {
+      return
+    }
+
+    setSpaceTableState(spaceTable)
+  }
+  
   // Managers
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false) // Column
   const [colSpanColumnReference, setColSpanColumnReference] = useState(0) // Expand Column
@@ -74,16 +105,16 @@ export function SpaceTable({
 
   const sendRowColumnsCreate = async () => {
     rowsColumnsToCreate?.map(async (row) => {
-      return await onCreateNewColumnRow(row.rowValue, row.columnId, row.rowReference)
+      return await onSubmitCreateRowValue(row.rowValue, row.columnId, row.rowReference)
     })
 
     const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
       method: 'GET'
     })
   
-    const space = spaces.find(space => space.id === space.id)
+    const actualSpace = spaces.find(spaceItem => spaceItem.id === space.id)
 
-    const spaceTable = space?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
+    const spaceTable = actualSpace?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
     
     setRowsColumnsToCreate([])
     setIsNewRow(false)
@@ -117,16 +148,16 @@ export function SpaceTable({
 
   const sendRowColumnsUpdate = async () => {
     rowsColumnsToUpdate?.map(async (row) => {
-      await onUpdateColumnRow(row.rowValue, row.id)
+      return await onSubmitUpdateRowValue(row.rowValue, row.id)
     })
 
     const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
       method: 'GET'
     })
   
-    const space = spaces.find(space => space.id === space.id)
+    const actualSpace = spaces.find(spaceItem => spaceItem.id === space.id)
 
-    const spaceTable = space?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
+    const spaceTable = actualSpace?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
     
     setRowsColumnsToUpdate([])
     setEditRowReference(null)
@@ -137,56 +168,6 @@ export function SpaceTable({
 
     setSpaceTableState(spaceTable)
   }
-
-  // Table
-  const [spaceTableState, setSpaceTableState] = useState(spaceTable)
-
-  // Table Actions
-  const onCreateNewTable = async () => {
-    onTableCreateFinish && onTableCreateFinish()
-    router.refresh()
-  }
-
-  const onCreateNewColumn = async (e: FormEvent<HTMLFormElement>) => {
-    const responseNewTableData = await onSubmitNewColumn(e, spaceTableState)
-
-    console.log(responseNewTableData)
-    const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
-      method: 'GET'
-    })
-  
-    const space = spaces.find(space => space.id === space.id)
-
-    const spaceTable = space?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
-    
-    setIsNewColumnConfigDialog(false)
-
-    if (!spaceTable) {
-      return
-    }
-
-    setSpaceTableState(spaceTable)
-  }
-
-  const onCreateNewColumnRow = async (
-    value: string | boolean,
-    tableColumnId: string,
-    rowReference: number
-  ) => {
-    const responseNewTableData = await onSubmitCreateRowValue(String(value), tableColumnId, rowReference)
-
-    console.log(responseNewTableData)
-  }
-
-  const onUpdateColumnRow = async (
-    rowValue: string | boolean,
-    tableRowId: string
-  ) => {
-    const responseNewTableData = await onSubmitUpdateRowValue(String(rowValue), tableRowId)
-
-    console.log(responseNewTableData)
-  }
-
  
 
   // const onDragStartListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
@@ -205,6 +186,12 @@ export function SpaceTable({
   useEffect(() => {
     setSpaceTableState(spaceTable)
   }, [])
+
+  useEffect(() => {
+    console.log("transformTableData(spaceTableState)", transformTableData(spaceTableState))
+    setTableRowColumns(transformTableData(spaceTableState))
+  }, [spaceTableState])
+
 
   return (
     <section className={styles.Content}>
@@ -259,17 +246,40 @@ export function SpaceTable({
           </THead>
 
           <tbody>
-            {transformTableData(spaceTableState).map((row) => (
+            {tableRowColumns.map((row) => (
               <tr key={row.id}>
-                {row.columns.map((column, index) => (
-                  <Fragment key={index}>
-                    {column.rowValue 
-                    ? 
-                      <>
-                        {editRowReference !== row.rowReference || editRowReference === -1
+                {spaceTableState.columns.map((column, columnIndex) => (
+                  <Fragment key={`${row.rowReference}-${column.columnReference}`}>
+                    {!row.columns[columnIndex] 
+                    ? <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
+                        <input
+                          onChange={(e) => {
+                            const value = column.columnType === 'CHECKBOX' 
+                            ? e.target.checked
+                            : e.target.value 
+
+                            console.log('editando', {
+                              columnId: column.id,
+                              rowReference: row.rowReference,
+                              rowValue: String(value)
+                            })
+                            addColumnRowToCreateArray({
+                              columnId: column.id,
+                              rowReference: row.rowReference,
+                              rowValue: String(value)
+                            })
+                          }}
+                          placeholder='nao tem valor com linha criada'
+                          type={column.columnType}
+                        />
+                      </td>
+                    : <>
+                        {editRowReference !== row.rowReference
                           ? 
                             <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
-                              {column.rowValue}
+                              {`column ${row.columns[columnIndex].columnReference} `}
+                              {`row ${row.rowReference}`}
+                              {/* {row.columns[columnIndex].rowValue} */}
                             </td>
                           :
                           <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
@@ -280,44 +290,31 @@ export function SpaceTable({
                                 : e.target.value 
       
                                 addColumnRowToUpdateArray({
-                                  id: column.rowId,
+                                  id: row.columns[columnIndex].columnId,
                                   rowReference: row.rowReference,
                                   rowValue: String(value)
                                 })
                               }}
-                              placeholder={column.rowValue}
+                              placeholder={row.columns[columnIndex].rowValue}
                               type={column.columnType.toLowerCase()}
                             />
                           </td>
-                          }
+                        }
                       </>
-                    : 
-                    <td>
-                      <input
-                        onChange={(e) => {
-                          const value = column.columnType === 'CHECKBOX' 
-                          ? e.target.checked
-                          : e.target.value 
-
-                          addColumnRowToCreateArray({
-                            columnId: column.columnId,
-                            rowReference: row.rowReference,
-                            rowValue: String(value)
-                          })
-                        }}
-                        type={column.columnType}
-                      />
-                    </td>
                     }
                   </Fragment>
                 ))}
                 {/* FIXED COLUMNS ACTIONS*/}
                 <td className={styles.creation}>
-                  {editRowReference === row.rowReference
-                  ? <button onClick={() => {
-                      console.log('salvando', rowsColumnsToUpdate)
+                  {editRowReference === row.rowReference || rowsColumnsToCreate?.find(rowToCreate => rowToCreate.rowReference === row.rowReference) 
+                  ? (
+                    <button onClick={() => {
+                      sendRowColumnsCreate()
                       sendRowColumnsUpdate()
-                  }}>Salvar</button>
+                    }}>
+                      Salvar
+                    </button>
+                  )
                   : <button onClick={() => setEditRowReference(row.rowReference)}>Editar</button>}
                 </td>
                 <td>
@@ -336,7 +333,7 @@ export function SpaceTable({
               {isNewRow ?
                 <>
                   {spaceTableState.columns.map((column) => (
-                    <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
+                    <td key={column.columnReference} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
                       <input
                         onChange={(e) => {
                           const value = column.columnType === 'CHECKBOX' 
@@ -377,7 +374,7 @@ export function SpaceTable({
                     </div>
                   </td>
                 </>
-              : <td className={styles.addNewRow} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td>
+              : <td colSpan={spaceTableState.columns.length + 1} className={styles.addNewRow} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td>
               }
             </tr>
           </tbody>

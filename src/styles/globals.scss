@@ -7,10 +7,30 @@
 }
 
 body, html {
-  font-size: 16px
+  font-size: 16px;
+
+  scrollbar-width: thin; /* Para Firefox */
+  scrollbar-color: black transparent; /* Para Firefox, define a cor da barra e do track */
+
+  /* Para WebKit (Chrome, Edge, Safari) */
+  *::-webkit-scrollbar {
+    height: 4px; /* Altura da barra de rolagem horizontal */
+    width: 4px;
+    background: transparent; /* Fundo transparente */
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: black; /* Cor da barra de rolagem */
+    border-radius: 2px; /* Borda arredondada para a barra de rolagem */
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent; /* Fundo transparente para o track */
+  }
 }
 
 main {
+ 
 }
 
 fieldset {

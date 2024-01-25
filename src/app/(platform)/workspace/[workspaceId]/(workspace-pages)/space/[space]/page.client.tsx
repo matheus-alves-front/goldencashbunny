@@ -30,7 +30,7 @@ export default function SpacePageClient({
         </button>
         <span className={styles.badge}><small>Criar Categoria</small></span>
       </h1>
-      <section>
+      <>
         {isCreateNewTable && 
           <SpaceTable 
             workspaceId={workspaceId}
@@ -47,7 +47,7 @@ export default function SpacePageClient({
             spaceTable={table}
           /> 
         ))}
-      </section>
+      </>
     </>
   )
 }
