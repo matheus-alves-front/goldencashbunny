@@ -159,6 +159,8 @@ export function SpaceTable({
 
     const spaceTable = space?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
     
+    setIsNewColumnConfigDialog(false)
+
     if (!spaceTable) {
       return
     }
