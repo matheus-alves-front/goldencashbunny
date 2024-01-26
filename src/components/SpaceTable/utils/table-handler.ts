@@ -1,7 +1,17 @@
-import { SpaceTableType, TableColumnType, TableDataType } from "@/@types/globalTypes"
+import { SpaceTableType } from "@/@types/globalTypes"
 import { fetchInstanceWithCookies } from "@/api/fetchInstances"
-import { ChangeEvent, FormEvent } from "react"
-import { FormattedRowsColumns } from "./tableDataFormat"
+import { FormEvent } from "react"
+
+type ColumnConfig = {
+  name: string;
+  columnType: string;
+} 
+
+export type CreateUpdateRowColumnType = {
+  rowReference: number,
+  columnReference: number,
+  value: string
+}
 
 export const onCreateTable = async (
   name: string,
@@ -47,11 +57,6 @@ export const onTableNameUpdate = async (
   return updateTablePost
 }
 
-type ColumnConfig = {
-  name: string;
-  columnType: string;
-} 
-
 export const onSubmitNewColumn = async (
   e: FormEvent<HTMLFormElement>,
   table: SpaceTableType,
@@ -68,8 +73,6 @@ export const onSubmitNewColumn = async (
     columnType: type
   }
 
-  console.log(submitNewColumn)
-
   const newTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/${table.id}/column`, {
     method: 'POST',
     body: JSON.stringify(submitNewColumn)
@@ -79,33 +82,35 @@ export const onSubmitNewColumn = async (
 }
 
 export async function onSubmitUpdateRowValue(
-  value: string,
-  tableRowId: string
+  rowColumns: CreateUpdateRowColumnType[],
+  spaceTableId: string
 ) {  
 
-  const newTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/column/row/${tableRowId}`, {
+  const newTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/${spaceTableId}/rows`, {
     method: 'PATCH',
-    body: JSON.stringify({
-      value: value
-    })
+    body: JSON.stringify(rowColumns)
   })
 
   return newTable
 }
 
 export async function onSubmitCreateRowValue(
-  value: string,
-  tableColumnId: string,
-  rowReference: number
+  rowColumns: CreateUpdateRowColumnType[],
+  spaceTableId: string,
 ) {  
 
-  const newTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/column/${tableColumnId}/row`, {
+  const newTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/${spaceTableId}/rows`, {
     method: 'POST',
-    body: JSON.stringify({
-      rowReference,
-      value
-    })
+    body: JSON.stringify(rowColumns)
   })
 
   return newTable
+}
+
+export async function onSubmitDeleteRow(spaceTableId: string, rowReference: number) {
+  const rowDeleted = await fetchInstanceWithCookies(`/space/table/${spaceTableId}/row/references/${rowReference}`, {
+    method: 'DELETE'
+  })
+
+  return rowDeleted
 }

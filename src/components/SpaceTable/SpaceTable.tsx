@@ -5,7 +5,9 @@ import { SpaceTableType, SpaceType, TableDataType } from '@/@types/globalTypes';
 import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
 import { 
+  CreateUpdateRowColumnType,
   onSubmitCreateRowValue,
+  onSubmitDeleteRow,
   onSubmitNewColumn,
   onSubmitUpdateRowValue, 
 } from './utils/table-handler';
@@ -32,10 +34,6 @@ type TableCreationProps = {
   space: SpaceType,
   workspaceId: string,
   onTableCreateFinish?: () => void,
-}
-
-interface RowColumnCreationType extends Omit<TableDataType, 'id'> {
-  columnId: string
 }
 
 export function SpaceTable({
@@ -82,17 +80,17 @@ export function SpaceTable({
   const [colSpanColumnReference, setColSpanColumnReference] = useState(0) // Expand Column
 
   const [editRowReference, setEditRowReference] = useState<number | null>(null) // Row
-  const [rowsColumnsToUpdate, setRowsColumnsToUpdate] = useState<TableDataType[] | null>(null)
+  const [rowsColumnsToUpdate, setRowsColumnsToUpdate] = useState<CreateUpdateRowColumnType[]>([])
 
   const [isNewRow, setIsNewRow] = useState(false)
-  const [rowsColumnsToCreate, setRowsColumnsToCreate] = useState<RowColumnCreationType[] | null>(null)
+  const [rowsColumnsToCreate, setRowsColumnsToCreate] = useState<CreateUpdateRowColumnType[]>([])
   
-  const addColumnRowToCreateArray = async (columnRow: RowColumnCreationType) => {
+  const addColumnRowToCreateArray = async (columnRow: CreateUpdateRowColumnType) => {
     setRowsColumnsToCreate((prevRowsColumnsToUpdate) => {
       if (!prevRowsColumnsToUpdate) {
         return [columnRow]
       }
-      const existingIndex = prevRowsColumnsToUpdate.findIndex(row => row.columnId === columnRow.columnId);
+      const existingIndex = prevRowsColumnsToUpdate.findIndex(row => row.columnReference === columnRow.columnReference && row.rowReference === row.rowReference);
   
       if (existingIndex !== -1) {
         const updatedRows = [...prevRowsColumnsToUpdate];
@@ -105,18 +103,11 @@ export function SpaceTable({
   };
 
   const sendRowColumnsCreate = async () => {
-    rowsColumnsToCreate?.map(async (row) => {
-      console.log('enviou create', row)
-      return await onSubmitCreateRowValue(row.rowValue, row.columnId, row.rowReference)
-    })
+    await onSubmitCreateRowValue(rowsColumnsToCreate, spaceTableState.id)
 
-    const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
+    const spaceTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/${spaceTableState.id}`, {
       method: 'GET'
     })
-  
-    const actualSpace = spaces.find(spaceItem => spaceItem.id === space.id)
-
-    const spaceTable = actualSpace?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
     
     setRowsColumnsToCreate([])
     setIsNewRow(false)
@@ -128,7 +119,7 @@ export function SpaceTable({
     setSpaceTableState(spaceTable)
   }
 
-  const addColumnRowToUpdateArray = async (columnRow: TableDataType) => {
+  const addColumnRowToUpdateArray = async (columnRow: CreateUpdateRowColumnType) => {
     setRowsColumnsToUpdate((prevRowsColumnsToUpdate) => {
       if (!columnRow) {
         return []
@@ -136,7 +127,7 @@ export function SpaceTable({
       if (!prevRowsColumnsToUpdate) {
         return [columnRow]
       }
-      const existingIndex = prevRowsColumnsToUpdate.findIndex(row => row.id === columnRow.id);
+      const existingIndex = prevRowsColumnsToUpdate.findIndex(row => row.rowReference === columnRow.rowReference && row.columnReference === columnRow.columnReference);
   
       if (existingIndex !== -1) {
         const updatedRows = [...prevRowsColumnsToUpdate];
@@ -149,21 +140,28 @@ export function SpaceTable({
   };
 
   const sendRowColumnsUpdate = async () => {
-    rowsColumnsToUpdate?.map(async (row) => {
-      console.log('enviou update', row)
-      return await onSubmitUpdateRowValue(row.rowValue, row.id)
-    })
+    await onSubmitUpdateRowValue(rowsColumnsToUpdate, spaceTableState.id)
 
-    const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
+    const spaceTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/${spaceTableState.id}`, {
       method: 'GET'
     })
-  
-    const actualSpace = spaces.find(spaceItem => spaceItem.id === space.id)
-
-    const spaceTable = actualSpace?.tables.find(spaceTable => spaceTable.id === spaceTableState.id)
     
     setRowsColumnsToUpdate([])
     setEditRowReference(null)
+
+    if (!spaceTable) {
+      return
+    }
+
+    setSpaceTableState(spaceTable)
+  }
+
+  const sendDeleteRow = async (rowReference: number) => {
+    await onSubmitDeleteRow(spaceTableState.id, rowReference)
+
+    const spaceTable: SpaceTableType = await fetchInstanceWithCookies(`/space/table/${spaceTableState.id}`, {
+      method: 'GET'
+    })
 
     if (!spaceTable) {
       return
@@ -195,6 +193,7 @@ export function SpaceTable({
     console.log("spaceTableState", spaceTableState)
     setTableRowColumns(transformTableRowColumns(spaceTableState))
   }, [spaceTableState])
+
 
 
   return (
@@ -269,15 +268,15 @@ export function SpaceTable({
 
                                       if (rowColumn.rowId) {
                                         addColumnRowToUpdateArray({
-                                          id: rowColumn.rowId,
+                                          columnReference: rowColumn.columnReference,
                                           rowReference: row.rowReference,
-                                          rowValue: String(value)
+                                          value: String(value)
                                         })
                                       } else {
                                         addColumnRowToCreateArray({
-                                          columnId: rowColumn.columnId,
+                                          columnReference: rowColumn.columnReference,
                                           rowReference: row.rowReference,
-                                          rowValue: String(value)
+                                          value: String(value)
                                         })
                                       }
                                     }}
@@ -307,7 +306,10 @@ export function SpaceTable({
                   </td>
                   <td>
                     <div className={styles.actions}>
-                      <button className={styles.exclude}>
+                      <button 
+                        className={styles.exclude}
+                        onClick={() => sendDeleteRow(row.rowReference)}
+                      >
                         <PiTrashBold 
                         />
                       </button>                      
@@ -331,9 +333,9 @@ export function SpaceTable({
                           const nextRowReference = tableRowColumns.length
 
                           addColumnRowToCreateArray({
-                            columnId: column.id,
+                            columnReference: column.columnReference,
                             rowReference: column.rows.length ? nextRowReference + 1 : 0,
-                            rowValue: String(value)
+                            value: String(value)
                           })
                         }}
                         type={column.columnType}
