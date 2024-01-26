@@ -250,71 +250,71 @@ export function SpaceTable({
           </THead>
 
           <tbody>
-          {tableRowColumns.map((row) => (
-              <tr key={row.id}>
-                {spaceTableState.columns.map((column) => (
-                  <td key={`${column.columnReference}-${row.rowReference}`} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
-                    {row.columns.map((rowColumn) => (
-                      <Fragment key={`${rowColumn.rowId}-${rowColumn.columnId}`}>
-                        {rowColumn.columnReference === column.columnReference
-                        ? <>
-                            {editRowReference !== row.rowReference
-                              ? <span>{rowColumn.rowValue}</span>
-                              :
-                                <input
-                                  onChange={(e) => {
-                                    const value = column.columnType === 'CHECKBOX' 
-                                    ? e.target.checked
-                                    : e.target.value 
+            {tableRowColumns.map((row) => (
+                <tr key={row.id}>
+                  {spaceTableState.columns.map((column) => (
+                    <td key={`${column.columnReference}-${row.rowReference}`} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
+                      {row.columns.map((rowColumn) => (
+                        <Fragment key={`${rowColumn.rowId}-${rowColumn.columnId}`}>
+                          {rowColumn.columnReference === column.columnReference
+                          ? <>
+                              {editRowReference !== row.rowReference
+                                ? <span>{rowColumn.rowValue}</span>
+                                :
+                                  <input
+                                    onChange={(e) => {
+                                      const value = column.columnType === 'CHECKBOX' 
+                                      ? e.target.checked
+                                      : e.target.value 
 
-                                    if (rowColumn.rowId) {
-                                      addColumnRowToUpdateArray({
-                                        id: rowColumn.columnId,
-                                        rowReference: row.rowReference,
-                                        rowValue: String(value)
-                                      })
-                                    } else {
-                                      addColumnRowToCreateArray({
-                                        columnId: rowColumn.columnId,
-                                        rowReference: row.rowReference,
-                                        rowValue: String(value)
-                                      })
-                                    }
-                                  }}
-                                  placeholder={rowColumn.rowValue}
-                                  type={column.columnType.toLowerCase()}
-                                />
-                            }
-                          </>
-                        : null}
-                      </Fragment>
-                    ))}
+                                      if (rowColumn.rowId) {
+                                        addColumnRowToUpdateArray({
+                                          id: rowColumn.rowId,
+                                          rowReference: row.rowReference,
+                                          rowValue: String(value)
+                                        })
+                                      } else {
+                                        addColumnRowToCreateArray({
+                                          columnId: rowColumn.columnId,
+                                          rowReference: row.rowReference,
+                                          rowValue: String(value)
+                                        })
+                                      }
+                                    }}
+                                    placeholder={rowColumn.rowValue}
+                                    type={column.columnType.toLowerCase()}
+                                  />
+                              }
+                            </>
+                          : null}
+                        </Fragment>
+                      ))}
+                    </td>
+                  ))}
+                  
+                  {/* FIXED COLUMNS ACTIONS*/}
+                  <td className={styles.creation}>
+                    {editRowReference === row.rowReference
+                    ? (
+                      <button onClick={() => {
+                        sendRowColumnsCreate()
+                        sendRowColumnsUpdate()
+                      }}>
+                        Salvar
+                      </button>
+                    )
+                    : <button onClick={() => setEditRowReference(row.rowReference)}>Editar</button>}
                   </td>
-                ))}
-                
-                {/* FIXED COLUMNS ACTIONS*/}
-                <td className={styles.creation}>
-                  {editRowReference === row.rowReference
-                  ? (
-                    <button onClick={() => {
-                      sendRowColumnsCreate()
-                      sendRowColumnsUpdate()
-                    }}>
-                      Salvar
-                    </button>
-                  )
-                  : <button onClick={() => setEditRowReference(row.rowReference)}>Editar</button>}
-                </td>
-                <td>
-                  <div className={styles.actions}>
-                    <button className={styles.exclude}>
-                      <PiTrashBold 
-                      />
-                    </button>                      
-                    <TfiArrowsVertical className={styles.reorder}/>
-                  </div>
-                </td>
-              </tr>
+                  <td>
+                    <div className={styles.actions}>
+                      <button className={styles.exclude}>
+                        <PiTrashBold 
+                        />
+                      </button>                      
+                      <TfiArrowsVertical className={styles.reorder}/>
+                    </div>
+                  </td>
+                </tr>
             ))}
 
             <tr>
@@ -359,7 +359,9 @@ export function SpaceTable({
                     </div>
                   </td>
                 </>
-              : <td colSpan={spaceTableState.columns.length + 1} className={styles.addNewRow} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td>
+              : <>
+                  {spaceTableState.columns.length ? <td colSpan={spaceTableState.columns.length + 1} className={styles.addNewRow} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td> : null}
+                </>
               }
             </tr>
           </tbody>
