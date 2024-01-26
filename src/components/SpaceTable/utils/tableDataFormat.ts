@@ -12,8 +12,7 @@ export type FormattedRowsColumns = {
   }[]
 };
 
-
-export function transformTableData(spaceTable: SpaceTableType) {
+export function transformTableRowColumns(spaceTable: SpaceTableType) {
   if (!spaceTable.columns || spaceTable.columns.length === 0) {
     return [];
   }
@@ -21,15 +20,29 @@ export function transformTableData(spaceTable: SpaceTableType) {
   // Inicializa o array de todas as linhas da tabela
   let allRows = [] as FormattedRowsColumns[];
 
-  // Percorre cada coluna para acessar as linhas
+  // Cria um conjunto para rastrear todas as referências de linha únicas
+  let allRowReferences = new Set<number>();
   spaceTable.columns.forEach(column => {
     column.rows.forEach(row => {
-      // Verifica se a linha já existe no array allRows
-      let existingRow = allRows.find(r => r.rowReference === row.rowReference);
+      allRowReferences.add(row.rowReference);
+    });
+  });
 
-      if (existingRow) {
-        // Se a linha já existe, adiciona o valor da coluna atual
-        existingRow.columns.push({
+  // Percorre todas as referências de linha
+  allRowReferences.forEach(rowRef => {
+    // Cria uma nova linha com referências e colunas vazias
+    let newRow: FormattedRowsColumns = {
+      id: String(rowRef),
+      rowReference: rowRef,
+      columns: []
+    };
+
+    // Percorre cada coluna para adicionar valores de linha ou vazio
+    spaceTable.columns.forEach(column => {
+      let row = column.rows.find(r => r.rowReference === rowRef);
+
+      if (row) {
+        newRow.columns.push({
           columnId: column.id,
           columnType: column.columnType,
           columnReference: column.columnReference,
@@ -37,21 +50,19 @@ export function transformTableData(spaceTable: SpaceTableType) {
           rowId: row.id
         });
       } else {
-        // Se a linha não existe, cria uma nova linha
-        allRows.push({
-          id: String(row.rowReference),
-          rowReference: row.rowReference,
-          columns: [{
-            columnId: column.id,
-            columnType: column.columnType,
-            columnReference: column.columnReference,
-            rowValue: row.rowValue,
-            rowId: row.id
-          }]
+        newRow.columns.push({
+          columnId: column.id,
+          columnType: column.columnType,
+          columnReference: column.columnReference,
+          rowValue: '', // Valor vazio para linhas ausentes
+          rowId: '' // ID vazio para linhas ausentes
         });
       }
     });
+
+    allRows.push(newRow);
   });
 
   return allRows;
 }
+

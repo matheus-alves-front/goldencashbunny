@@ -12,9 +12,10 @@ import {
 import { DialogItem } from './TableItems/Dialog';
 import { TableHeader } from './TableItems/TableHeader';
 import { THead } from './TableItems/THead';
-import { FormattedRowsColumns, transformTableData } from './utils/tableDataFormat';
+import { FormattedRowsColumns, transformTableRowColumns } from './utils/tableDataFormat';
 import styles from './tablecreation.module.scss'
 import { fetchInstanceWithCookies } from '@/api/fetchInstances';
+import { cp } from 'fs';
 
 const ColumnTypes = [
   'TEXT',
@@ -105,6 +106,7 @@ export function SpaceTable({
 
   const sendRowColumnsCreate = async () => {
     rowsColumnsToCreate?.map(async (row) => {
+      console.log('enviou create', row)
       return await onSubmitCreateRowValue(row.rowValue, row.columnId, row.rowReference)
     })
 
@@ -148,6 +150,7 @@ export function SpaceTable({
 
   const sendRowColumnsUpdate = async () => {
     rowsColumnsToUpdate?.map(async (row) => {
+      console.log('enviou update', row)
       return await onSubmitUpdateRowValue(row.rowValue, row.id)
     })
 
@@ -188,8 +191,9 @@ export function SpaceTable({
   }, [])
 
   useEffect(() => {
-    console.log("transformTableData(spaceTableState)", transformTableData(spaceTableState))
-    setTableRowColumns(transformTableData(spaceTableState))
+    console.log("transformTableRowColumns(spaceTableState)", transformTableRowColumns(spaceTableState))
+    console.log("spaceTableState", spaceTableState)
+    setTableRowColumns(transformTableRowColumns(spaceTableState))
   }, [spaceTableState])
 
 
@@ -246,67 +250,51 @@ export function SpaceTable({
           </THead>
 
           <tbody>
-            {tableRowColumns.map((row) => (
+          {tableRowColumns.map((row) => (
               <tr key={row.id}>
-                {spaceTableState.columns.map((column, columnIndex) => (
-                  <Fragment key={`${row.rowReference}-${column.columnReference}`}>
-                    {!row.columns[columnIndex] 
-                    ? <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
-                        <input
-                          onChange={(e) => {
-                            const value = column.columnType === 'CHECKBOX' 
-                            ? e.target.checked
-                            : e.target.value 
+                {spaceTableState.columns.map((column) => (
+                  <td key={`${column.columnReference}-${row.rowReference}`} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
+                    {row.columns.map((rowColumn) => (
+                      <Fragment key={`${rowColumn.rowId}-${rowColumn.columnId}`}>
+                        {rowColumn.columnReference === column.columnReference
+                        ? <>
+                            {editRowReference !== row.rowReference
+                              ? <span>{rowColumn.rowValue}</span>
+                              :
+                                <input
+                                  onChange={(e) => {
+                                    const value = column.columnType === 'CHECKBOX' 
+                                    ? e.target.checked
+                                    : e.target.value 
 
-                            console.log('editando', {
-                              columnId: column.id,
-                              rowReference: row.rowReference,
-                              rowValue: String(value)
-                            })
-                            addColumnRowToCreateArray({
-                              columnId: column.id,
-                              rowReference: row.rowReference,
-                              rowValue: String(value)
-                            })
-                          }}
-                          placeholder='nao tem valor com linha criada'
-                          type={column.columnType}
-                        />
-                      </td>
-                    : <>
-                        {editRowReference !== row.rowReference
-                          ? 
-                            <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
-                              {`column ${row.columns[columnIndex].columnReference} `}
-                              {`row ${row.rowReference}`}
-                              {/* {row.columns[columnIndex].rowValue} */}
-                            </td>
-                          :
-                          <td colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
-                            <input
-                              onChange={(e) => {
-                                const value = column.columnType === 'CHECKBOX' 
-                                ? e.target.checked
-                                : e.target.value 
-      
-                                addColumnRowToUpdateArray({
-                                  id: row.columns[columnIndex].columnId,
-                                  rowReference: row.rowReference,
-                                  rowValue: String(value)
-                                })
-                              }}
-                              placeholder={row.columns[columnIndex].rowValue}
-                              type={column.columnType.toLowerCase()}
-                            />
-                          </td>
-                        }
-                      </>
-                    }
-                  </Fragment>
+                                    if (rowColumn.rowId) {
+                                      addColumnRowToUpdateArray({
+                                        id: rowColumn.columnId,
+                                        rowReference: row.rowReference,
+                                        rowValue: String(value)
+                                      })
+                                    } else {
+                                      addColumnRowToCreateArray({
+                                        columnId: rowColumn.columnId,
+                                        rowReference: row.rowReference,
+                                        rowValue: String(value)
+                                      })
+                                    }
+                                  }}
+                                  placeholder={rowColumn.rowValue}
+                                  type={column.columnType.toLowerCase()}
+                                />
+                            }
+                          </>
+                        : null}
+                      </Fragment>
+                    ))}
+                  </td>
                 ))}
+                
                 {/* FIXED COLUMNS ACTIONS*/}
                 <td className={styles.creation}>
-                  {editRowReference === row.rowReference || rowsColumnsToCreate?.find(rowToCreate => rowToCreate.rowReference === row.rowReference) 
+                  {editRowReference === row.rowReference
                   ? (
                     <button onClick={() => {
                       sendRowColumnsCreate()
@@ -340,13 +328,11 @@ export function SpaceTable({
                           ? e.target.checked
                           : e.target.value 
 
-                          const nextRowReference = column.rows.reduce((max, item) => {
-                            return item.rowReference > max ? item.rowReference : max;
-                          }, 0);
+                          const nextRowReference = tableRowColumns.length
 
                           addColumnRowToCreateArray({
                             columnId: column.id,
-                            rowReference: nextRowReference + 1,
+                            rowReference: column.rows.length ? nextRowReference + 1 : 0,
                             rowValue: String(value)
                           })
                         }}
@@ -357,7 +343,6 @@ export function SpaceTable({
                   {/* FIXED COLUMNS ACTIONS*/}
                   <td className={styles.creation}>
                     <button onClick={() => {
-                      console.log('salvando', rowsColumnsToCreate)
                       sendRowColumnsCreate()
                     }}>
                         Salvar

@@ -24,7 +24,6 @@ export function LoginForm() {
       body: JSON.stringify(credentialsLogin)
     })
 
-    console.log(request.accessToken)
     if (request.accessToken) {
       setCookies(request.accessToken, '')
       router.push('/workspaces')

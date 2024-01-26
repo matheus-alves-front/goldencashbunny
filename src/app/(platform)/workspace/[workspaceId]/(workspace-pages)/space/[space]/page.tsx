@@ -21,7 +21,6 @@ export default async function SpacePage({
 
   const space = spaces.find(space => space.id === spaceId)
 
-  console.log("space server", space)
   // @ts-ignore 
   if (!space) {
     return (
