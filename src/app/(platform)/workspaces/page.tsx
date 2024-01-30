@@ -3,7 +3,6 @@ import { redirect } from "next/navigation"
 import { fetchInstanceWithCookies} from "@/api/fetchInstances"
 import { useAccountJWT } from "@/hooks/useAccountJWT"
 import { WorkspacesClientPage } from "./pageClient"
-import styles from './page.module.scss'
 
 export default async function WorkspacesPage() {
   const account = await useAccountJWT()
@@ -18,8 +17,8 @@ export default async function WorkspacesPage() {
   if (!workspaces) workspaces = []
 
   return (
-    <main className={styles.Main}>
-      <header className={styles.Header}>
+    <main className="container">
+      <header>
         <h1>Workspaces</h1>
         <h2>Crie ou selecione seu workspace</h2>
       </header>

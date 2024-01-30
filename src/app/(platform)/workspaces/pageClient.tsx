@@ -1,7 +1,6 @@
 "use client"
 import { FormEvent, useContext, useState } from "react"
 import { JWTAccountType, WorkspaceType } from "@/@types/globalTypes"
-import styles from './page.module.scss'
 import Link from "next/link"
 import { IoAlbums } from "react-icons/io5"
 import { fetchInstanceWithCookies } from "@/api/fetchInstances"
@@ -43,19 +42,19 @@ export function WorkspacesClientPage({
 
   return (
     <>
-     <section className={styles.Section}>
+     <section>
       {workspaces.length ? 
         <>
           {workspaces.map((workspace) => (
             <Link 
               key={workspace.id}
-              className={styles.workspacesButton}
+            
               // onClick={() => UpdateActiveWorkspace(workspace)}
               href={`workspace/${workspace.id}/dashboard`} 
             >
               <span>{workspace.companyName} Workspace</span>
               <span>{workspace.socialCompanyName}</span>
-              <IoAlbums className={styles.Icon} />
+              <IoAlbums />
             </Link>
           ))}
         </>
@@ -64,7 +63,7 @@ export function WorkspacesClientPage({
         ? 
           <form 
             onSubmit={onCreateWorkspace}
-            className={styles.createWorkspaceForm}
+          
           >
             <input 
               type="text" 
@@ -87,7 +86,7 @@ export function WorkspacesClientPage({
           </form>
         :
           <button 
-            className={styles.createWorkspace}
+          
             onClick={() => setIsNewWorkspace(true)}
           >
             <span>+</span>
