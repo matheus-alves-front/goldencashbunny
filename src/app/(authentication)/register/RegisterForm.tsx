@@ -1,6 +1,5 @@
 "use client"
 import { FormEvent } from 'react'
-import styles from './page.module.scss'
 import { fetchInstance } from '@/api/fetchInstances'
 import { useRouter } from 'next/navigation'
 import { AccountType } from '@/@types/globalTypes'
@@ -103,7 +102,6 @@ export function RegisterForm({...rest}) {
         <fieldset>
           <input  
             name='termsofuse'
-            className={styles.checkbox} 
             type="checkbox" 
           />
           <span>Eu concordo com os 

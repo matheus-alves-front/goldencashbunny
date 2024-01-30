@@ -1,5 +1,4 @@
 import { JWTAccountType, WorkspaceType } from '@/@types/globalTypes'
-import styles from './header.module.scss'
 
 export function Header({
   account, 
@@ -9,19 +8,16 @@ export function Header({
   workspace: WorkspaceType
 }) {
   return (
-    <header 
-      className={styles.header}
-    >
-      <button className={styles.workspaceButton}>{workspace.companyName} Workspace</button>
+    <header>
+      <button>{workspace.companyName} Workspace</button>
       <nav>
         <img 
-          className={styles.logo}
           src="/logo.png" 
           alt="GoldenCashBunny Logo" 
         />
         <a href="#">Membros</a>
-        <button className={styles.profile}>
-          <div className={styles.profileTexts}>
+        <button>
+          <div>
             <span>{account.sub}</span>
             <span>{account.roles[0]}</span>
           </div>

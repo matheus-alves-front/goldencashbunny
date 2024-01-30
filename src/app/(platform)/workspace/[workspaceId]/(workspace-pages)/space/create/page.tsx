@@ -2,7 +2,6 @@
 import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
-import styles from './page.module.scss';
 import { SpaceType } from "@/@types/globalTypes";
 
 export default function SpaceCreatePage({
@@ -36,7 +35,7 @@ export default function SpaceCreatePage({
 
   return (
     <>
-      <section className={styles.Container}>
+      <section>
         <h1>Crie seu Espaço</h1>
         <p>
           Cada espaço te possibilita de organizar suas planilhas do seu jeito e integra-los cada uma em seus Dashboards

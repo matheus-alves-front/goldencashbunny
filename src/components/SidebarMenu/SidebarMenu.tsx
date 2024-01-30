@@ -1,4 +1,3 @@
-import styles from './sidebarmenu.module.scss'
 import { BsTools } from "react-icons/bs";
 import { IoAnalyticsSharp } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa";
@@ -27,14 +26,14 @@ export async function SidebarMenu({
   })
 
   return (
-    <aside className={styles.Sidebar}>
+    <aside>
       <nav>
         <h3>Menu</h3>
-        <Link href={`/workspace/${workspace.id}/dashboard`}><BsTools className={styles.icon} /> DashBoard</Link>
-        <Link href=""><BsTools className={styles.icon} /> Configurações</Link>
-        <Link href=""><BsTools className={styles.icon} /> Precificações</Link>
-        <Link href=""><BsTools className={styles.icon} /> Clientes</Link>
-        <Link href=""><BsTools className={styles.icon} /> Catálogos</Link>
+        <Link href={`/workspace/${workspace.id}/dashboard`}><BsTools /> DashBoard</Link>
+        <Link href=""><BsTools /> Configurações</Link>
+        <Link href=""><BsTools /> Precificações</Link>
+        <Link href=""><BsTools /> Clientes</Link>
+        <Link href=""><BsTools /> Catálogos</Link>
       </nav>
       <nav>
         <h3>Dashboards 
@@ -43,7 +42,7 @@ export async function SidebarMenu({
           </button>
         </h3>
         {DASHBOARDS.map((space, index) => (
-          <a key={index} href=""><IoAnalyticsSharp className={styles.icon} /> {space}</a>
+          <a key={index} href=""><IoAnalyticsSharp /> {space}</a>
         ))}
       </nav>
       <nav>
@@ -59,8 +58,8 @@ export async function SidebarMenu({
             href={`/workspace/${workspace.id}/space/${space.id}`}
           >
             {space.name 
-              ? <MdOutlineAttachMoney className={styles.icon} /> 
-              : <MdOutlineMoneyOffCsred className={styles.icon} />
+              ? <MdOutlineAttachMoney /> 
+              : <MdOutlineMoneyOffCsred />
             }
 
             {space.name}

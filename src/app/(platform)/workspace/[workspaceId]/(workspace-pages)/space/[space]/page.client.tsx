@@ -1,7 +1,6 @@
 "use client"
 import { FullSpaceTablesType, SpaceTableType, SpaceType } from "@/@types/globalTypes"
 import { HiOutlinePlus } from "react-icons/hi";
-import styles from "./page.module.scss";
 import { useState } from "react";
 import { SpaceTable } from "@/components/SpaceTable/SpaceTable";
 
@@ -20,15 +19,15 @@ export default function SpacePageClient({
 
   return (
     <>
-      <h1 className={styles.pageTitle}>
+      <h1>
         {space.name} 
         <button 
-          className={styles.button}
+        
           onClick={() => setIsCreateNewTable(!isCreateNewTable)}
         >
           <HiOutlinePlus />
         </button>
-        <span className={styles.badge}><small>Criar Categoria</small></span>
+        <span><small>Criar Categoria</small></span>
       </h1>
       <>
         {isCreateNewTable && 

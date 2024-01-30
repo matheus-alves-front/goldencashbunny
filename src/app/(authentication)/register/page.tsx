@@ -1,5 +1,4 @@
 import { RegisterForm } from './RegisterForm'
-import styles from './page.module.scss'
 
 export const metadata = {
   title: 'GoldenCashBunny Registro',
@@ -8,9 +7,9 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <section className={styles.titles}>
-        <div className={styles.header}>
+    <main>
+      <section>
+        <div>
           <a href="/register">
             <img src="/icons/duplicate.png" alt="Register Icon" />
             
@@ -29,9 +28,9 @@ export default function Home() {
         />
         <h1>Registre-se</h1>
 
-        <section className={styles.formGroup}>
+        <section>
           <h2>Faça o registro com</h2>
-          <div className={styles.buttonGroup}>
+          <div>
             <button>
               <img src="/icons/facebook.png" alt="Facebook Icon" />
             </button>
@@ -40,8 +39,8 @@ export default function Home() {
             </button>
           </div>
           <span>ou</span>
-          <RegisterForm className={styles.formRegister}  />
-          <p className={styles.alreadyHave}>Já possui uma conta? <a href="/">Faça login</a></p>
+          <RegisterForm  />
+          <p>Já possui uma conta? <a href="/">Faça login</a></p>
         </section>
       </section>
     </main>

@@ -6,8 +6,7 @@ import { ActualWorkspaceContextProvider } from '@/contexts/ActualWorkspaceContex
 import { Header } from '@/components/Header/Header'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
 import { useAccountJWT } from '@/hooks/useAccountJWT'
-import '../../../../styles/globals.scss'
-import '../../../../styles/platform-globals.scss'
+import '../../../../styles/globals.css'
 
 export const metadata = {
   title: 'Lótus Workspace',
