@@ -1,8 +1,10 @@
-import '../../styles/globals.scss'
+import '../../styles/globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { useAccountJWT } from '@/hooks/useAccountJWT'
 import { redirect } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { ThemeContextProvider } from '@/contexts/ThemeContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,7 +26,14 @@ export default async function RootLayout({
 
   return (
     <html lang="br">
-      <body className={inter.className}>{children}</body>
+      <body className={cn(inter.className)}>
+        <ThemeContextProvider
+          attribute='class'
+          defaultTheme='light'
+        >
+          {children}
+        </ThemeContextProvider>
+      </body>
     </html>
   )
 }

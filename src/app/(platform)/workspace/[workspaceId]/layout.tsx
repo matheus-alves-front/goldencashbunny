@@ -6,8 +6,10 @@ import { ActualWorkspaceContextProvider } from '@/contexts/ActualWorkspaceContex
 import { Header } from '@/components/Header/Header'
 import { SidebarMenu } from '@/components/SidebarMenu/SidebarMenu'
 import { useAccountJWT } from '@/hooks/useAccountJWT'
-import '../../../../styles/globals.scss'
-import '../../../../styles/platform-globals.scss'
+import { ThemeContextProvider } from '@/contexts/ThemeContext'
+
+import './workspace.layout.css'
+import '../../../../styles/globals.css'
 
 export const metadata = {
   title: 'Lótus Workspace',
@@ -38,17 +40,25 @@ export default async function WorkspaceLayout({
   return (
     <ActualWorkspaceContextProvider>
       <html lang="br">
-        <body className={opensans.className}>
-          <Header 
-            workspace={workspace} 
-            account={account}
-          />
-          <SidebarMenu 
-            workspace={workspace}
-          />
-          <main>
-            {children}
-          </main>
+        <body className={`${opensans.className}
+          LayoutGrid grid-cols-layout grid-rows-layout w-full px-3 py-2
+        `}>
+          <ThemeContextProvider
+            attribute='class'
+            defaultTheme='light'
+          >
+            <Header 
+              workspace={workspace} 
+              account={account}
+            />
+            <SidebarMenu 
+              workspace={workspace}
+              css=''
+            />
+            <main className='border-t border-foreground p-2 pr-0'>
+              {children}
+            </main>
+          </ThemeContextProvider>
         </body>
       </html>
     </ActualWorkspaceContextProvider>
