@@ -1,6 +1,6 @@
 import { BsTools } from "react-icons/bs";
 import { IoAnalyticsSharp } from "react-icons/io5";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 
 import { 
   MdOutlineAttachMoney, 
@@ -11,11 +11,6 @@ import { fetchInstanceWithCookies } from '@/api/fetchInstances';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
-
-const DASHBOARDS = [
-  'Custom Dashboard 1',
-  'Custom Dashboard 2',
-]
 
 export async function SidebarMenu({
   workspace,
@@ -36,8 +31,7 @@ export async function SidebarMenu({
           <Button className='m-2 ml-0 w-auto self-center rounded-2xl' variant="default">{workspace.companyName} Workspace</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <DropdownMenuLabel><Link className="w-full" href={'/workspaces'}>Trocar Workspace</Link></DropdownMenuLabel>
         </DropdownMenuContent>
       </DropdownMenu>
       <nav className="border-t border-foreground py-4 px-2">
@@ -77,6 +71,15 @@ export async function SidebarMenu({
           <BsTools className={cn("p-2 w-[35px] h-[35px] shadow-lg rounded-xl")} /> 
           Catálogos
         </Link>
+        <h3 className="font-bold text-primary flex items-center gap-2 my-4">
+          Custom Dashboards
+          <Link
+            href={`/workspace/${workspace.id}/space/create`} 
+            className="flex items-center justify-center text-2xl font-regular p-2 w-[35px] h-[35px] shadow-lg rounded-xl hover:bg-foreground hover:text-primary-foreground transition-all"
+          >
+            +
+          </Link>
+        </h3>
         <h3 className="font-bold text-primary flex items-center gap-2">
           Seus Espaços
           <Link
@@ -96,7 +99,6 @@ export async function SidebarMenu({
               ? <MdOutlineAttachMoney className={cn("p-2 w-[35px] h-[35px] shadow-lg rounded-xl")} /> 
               : <MdOutlineMoneyOffCsred className={cn("p-2 w-[35px] h-[35px] shadow-lg rounded-xl")} />
             }
-
             {space.name}
           </Link>
         ))}

@@ -14,7 +14,6 @@ import {
 } from './utils/table-handler';
 import { DialogItem } from './TableItems/Dialog';
 import { TableHeader } from './TableItems/TableHeader';
-import { THead } from './TableItems/THead';
 import { FormattedRowsColumns, transformTableRowColumns } from './utils/tableDataFormat';
 
 const ColumnTypes = [
@@ -195,9 +194,8 @@ export function SpaceTable({
 
 
   return (
-    <section className={styles.Content}>
+    <section>
       <TableHeader 
-        className={styles.InputName}
         isInputName={!spaceTable.name}
         onSuccessSubmit={() => onCreateNewTable()}
         table={spaceTable}
@@ -206,7 +204,7 @@ export function SpaceTable({
 
       {spaceTableState && !onTableCreateFinish ? 
         <table>
-          <THead>
+          <thead>
             <tr>
               {spaceTableState.columns?.map(column => (
                 <th 
@@ -219,9 +217,7 @@ export function SpaceTable({
               ))}
 
               {/* FIXED COLUMNS */}
-              <th  
-                className={styles.creation}
-              >
+              <th >
                 <button 
                   onClick={() => setIsNewColumnConfigDialog(!isNewColumnConfigDialog)} 
                 >
@@ -234,17 +230,16 @@ export function SpaceTable({
                   isNewColumnConfigDialog={isNewColumnConfigDialog}
                   onSubmitNewColumn={(e) => onCreateNewColumn(e)}
                   setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
-                  styles={styles}
                 />
               </th>
               {spaceTableState.columns?.length < 1 && 
-                <th className={styles.empty}></th>
+                <th></th>
               }
               <th>
                 Açoes
               </th>
             </tr>
-          </THead>
+          </thead>
 
           <tbody>
             {tableRowColumns.map((row) => (
@@ -290,7 +285,7 @@ export function SpaceTable({
                   ))}
                   
                   {/* FIXED COLUMNS ACTIONS*/}
-                  <td className={styles.creation}>
+                  <td>
                     {editRowReference === row.rowReference
                     ? (
                       <button onClick={() => {
@@ -303,15 +298,15 @@ export function SpaceTable({
                     : <button onClick={() => setEditRowReference(row.rowReference)}>Editar</button>}
                   </td>
                   <td>
-                    <div className={styles.actions}>
+                    <div>
                       <button 
-                        className={styles.exclude}
+                      
                         onClick={() => sendDeleteRow(row.rowReference)}
                       >
                         <PiTrashBold 
                         />
                       </button>                      
-                      <TfiArrowsVertical className={styles.reorder}/>
+                      <TfiArrowsVertical/>
                     </div>
                   </td>
                 </tr>
@@ -341,7 +336,7 @@ export function SpaceTable({
                     </td>
                   ))}
                   {/* FIXED COLUMNS ACTIONS*/}
-                  <td className={styles.creation}>
+                  <td>
                     <button onClick={() => {
                       sendRowColumnsCreate()
                     }}>
@@ -349,18 +344,18 @@ export function SpaceTable({
                     </button>
                   </td>
                   <td>
-                    <div className={styles.actions}>
-                      <button onClick={() => setIsNewRow(!isNewRow)} className={styles.exclude}>
+                    <div>
+                      <button onClick={() => setIsNewRow(!isNewRow)}>
                         <PiTrashBold 
                         />
                       </button>
                       {/* <button>+</button> */}
-                      <TfiArrowsVertical className={styles.reorder}/>
+                      <TfiArrowsVertical/>
                     </div>
                   </td>
                 </>
               : <>
-                  {spaceTableState.columns.length ? <td colSpan={spaceTableState.columns.length + 1} className={styles.addNewRow} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td> : null}
+                  {spaceTableState.columns.length ? <td colSpan={spaceTableState.columns.length + 1} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td> : null}
                 </>
               }
             </tr>

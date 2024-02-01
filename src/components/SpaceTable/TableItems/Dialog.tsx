@@ -5,14 +5,12 @@ export function DialogItem({
   isNewColumnConfigDialog,
   onSubmitNewColumn,
   columnTypes,
-  setIsNewColumnConfigDialog,
-  styles
+  setIsNewColumnConfigDialog
 }: {
   isNewColumnConfigDialog: boolean,
   onSubmitNewColumn: (e: FormEvent<HTMLFormElement>) => Promise<void>,
   columnTypes: string[],
   setIsNewColumnConfigDialog: () => void,
-  styles: CustomStylesType
 }) {
   return (
     <dialog open={isNewColumnConfigDialog}>
@@ -37,14 +35,12 @@ export function DialogItem({
         </select>
         <footer>
           <button 
-            className={styles.resetCreation}
             onClick={setIsNewColumnConfigDialog}
             type="reset"
           >
             Cancelar
           </button>
-          <button 
-            className={styles.submitCreation}
+          <button  
             type="submit"
           >
             Criar

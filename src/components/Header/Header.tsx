@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Button } from '../ui/button'
 import Link from 'next/link'
-import { ToggleTheme } from './ToggleTheme'
+import { ToggleTheme } from '../ToggleTheme/ToggleTheme'
 
 export function Header({
   account, 
