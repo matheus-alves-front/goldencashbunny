@@ -1,9 +1,10 @@
 "use client"
 import { FormEvent, Fragment, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
-import { SpaceTableType, SpaceType, TableDataType } from '@/@types/globalTypes';
+import { SpaceTableType, SpaceType } from '@/@types/globalTypes';
 import { TfiArrowsVertical } from "react-icons/tfi";
 import { PiTrashBold } from "react-icons/pi";
+import { fetchInstanceWithCookies } from '@/api/fetchInstances';
 import { 
   CreateUpdateRowColumnType,
   onSubmitCreateRowValue,
@@ -15,9 +16,6 @@ import { DialogItem } from './TableItems/Dialog';
 import { TableHeader } from './TableItems/TableHeader';
 import { THead } from './TableItems/THead';
 import { FormattedRowsColumns, transformTableRowColumns } from './utils/tableDataFormat';
-import styles from './tablecreation.module.scss'
-import { fetchInstanceWithCookies } from '@/api/fetchInstances';
-import { cp } from 'fs';
 
 const ColumnTypes = [
   'TEXT',

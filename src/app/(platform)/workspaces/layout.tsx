@@ -1,5 +1,5 @@
-
 import { ThemeContextProvider } from "@/contexts/ThemeContext"
+import '../../../styles/globals.css'
 import { Open_Sans } from "next/font/google"
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default async function RootLayout({
       <body className={opensans.className}>
         <ThemeContextProvider
           attribute='class'
-          defaultTheme='dark'
+          defaultTheme='light'
         >
           {children}
         </ThemeContextProvider>  

@@ -18,8 +18,12 @@ export default async function WorkspacesPage() {
 
   return (
     <main className="container">
-      <header>
-        <h1>Workspaces</h1>
+      <header 
+        className="w-full min-h-48 p-11 bg-foreground text-primary-foreground text-center 
+          flex flex-col align-center justify-center my-5 rounded-xl
+        "
+      >
+        <h1 className="text-4xl font-bold">Workspaces</h1>
         <h2>Crie ou selecione seu workspace</h2>
       </header>
       <WorkspacesClientPage 

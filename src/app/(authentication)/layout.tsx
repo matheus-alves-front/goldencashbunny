@@ -29,7 +29,7 @@ export default async function RootLayout({
       <body className={cn(inter.className)}>
         <ThemeContextProvider
           attribute='class'
-          defaultTheme='dark'
+          defaultTheme='light'
         >
           {children}
         </ThemeContextProvider>

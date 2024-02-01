@@ -1,0 +1,17 @@
+.LayoutGrid {
+  display: grid;
+  grid-template-areas: 'aside header'
+  'aside main';
+}
+
+body > header {
+  grid-area: header;
+}
+
+body > aside {
+  grid-area: aside;
+}
+
+body > main {
+  grid-area: main;
+}

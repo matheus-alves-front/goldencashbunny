@@ -3,6 +3,9 @@ import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import { SpaceType } from "@/@types/globalTypes";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function SpaceCreatePage({
   params
@@ -34,23 +37,27 @@ export default function SpaceCreatePage({
   }
 
   return (
-    <>
-      <section>
-        <h1>Crie seu Espaço</h1>
-        <p>
-          Cada espaço te possibilita de organizar suas planilhas do seu jeito e integra-los cada uma em seus Dashboards
-        </p>
-        <form onSubmit={onCreateSpace}>
-          <input 
-            type="text"
-            name="name" 
-            placeholder="Nome do Espaço"
-          />
-          <button type="submit">
-            Criar
-          </button>
-        </form>
-      </section>
-    </>
+    <section className="p-5">
+      <Card className="w-full md:max-w-[500px] md:m-auto">
+        <CardHeader>
+          <h1 className="text-2xl font-bold text-primary">Crie seu Espaço</h1>
+          <p className="mb-2">
+            Cada espaço te possibilita de organizar suas planilhas do seu jeito e integra-los cada uma em seus Dashboards
+          </p>
+        </CardHeader>
+        <CardContent>
+          <form className="flex flex-col gap-2 py-2" onSubmit={onCreateSpace}>
+            <Input 
+              type="text"
+              name="name" 
+              placeholder="Nome do Espaço"
+            />
+            <Button type="submit">
+              Criar
+            </Button>
+          </form>
+        </CardContent> 
+      </Card>
+    </section>
   )
 }

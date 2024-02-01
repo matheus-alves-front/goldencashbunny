@@ -6,6 +6,8 @@ import { IoAlbums } from "react-icons/io5"
 import { fetchInstanceWithCookies } from "@/api/fetchInstances"
 import { useRouter } from "next/navigation"
 import { ActualWorkspaceContext } from "@/contexts/ActualWorkspaceContext"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export function WorkspacesClientPage({
   workspaces,
@@ -42,19 +44,22 @@ export function WorkspacesClientPage({
 
   return (
     <>
-     <section>
+     <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 items-stretch">
       {workspaces.length ? 
         <>
           {workspaces.map((workspace) => (
             <Link 
               key={workspace.id}
-            
+              className="p-5 bg-foreground text-primary-foreground rounded
+              relative"
               // onClick={() => UpdateActiveWorkspace(workspace)}
               href={`workspace/${workspace.id}/dashboard`} 
             >
-              <span>{workspace.companyName} Workspace</span>
+              <h5 className="font-bold">Workspace</h5>
+              <span>{workspace.companyName}</span>
+              <br />
               <span>{workspace.socialCompanyName}</span>
-              <IoAlbums />
+              <IoAlbums className="absolute right-2 bottom-2 text-2xl" />
             </Link>
           ))}
         </>
@@ -63,37 +68,38 @@ export function WorkspacesClientPage({
         ? 
           <form 
             onSubmit={onCreateWorkspace}
-          
+            className="p-5 bg-foreground font-bold
+            rounded flex flex-col gap-2"
           >
-            <input 
+            <Input 
               type="text" 
               placeholder="Nome da Empresa"
               name="companyname"
             />
-            <input 
+            <Input 
               type="text" 
               placeholder="Nome Social"
               name="socialcompanyname"
             />
-            <input 
+            <Input 
               type="number" 
               placeholder="cnpj"
               name="cnpj"
             />
-            <button type="submit">
+            <Button variant={'secondary'} type="submit">
               Criar
-            </button>
+            </Button>
           </form>
         :
           <button 
-          
+            className="p-5 bg-foreground text-primary-foreground font-bold text-4xl
+            py-20 rounded"
             onClick={() => setIsNewWorkspace(true)}
           >
             <span>+</span>
           </button>
         }
       </section>
-      
     </>
   )
 }

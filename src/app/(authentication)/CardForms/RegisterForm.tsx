@@ -40,27 +40,27 @@ export function RegisterForm({...rest}) {
       password: password.value,
     }
 
-    if (cpf.value) {
-      registerData = {
-        ...registerData,  
-        cpf: cpf.value,
-      }
-    } 
-    if (cnpj.value) {
-      registerData = {
-        ...registerData,  
-        cpf: cnpj.value,
-      }
-    }
+    // if (cpf.value) {
+    //   registerData = {
+    //     ...registerData,  
+    //     cpf: cpf.value,
+    //   }
+    // } 
+    // if (cnpj.value) {
+    //   registerData = {
+    //     ...registerData,  
+    //     cpf: cnpj.value,
+    //   }
+    // }
 
-    const createAccount: AccountType = await fetchInstance('/account', {
+    await fetchInstance('/account', {
       method: 'POST',
       body: JSON.stringify(registerData)
     })
 
 
     const credentialsLogin = {
-      login: createAccount.email,
+      login: registerData.email,
       password: password.value
     }
 
