@@ -1,4 +1,7 @@
 import { CustomStylesType } from "@/@types/globalTypes"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Popover, PopoverTrigger } from "@/components/ui/popover"
 import { FormEvent } from "react"
 
 export function DialogItem({
@@ -13,9 +16,9 @@ export function DialogItem({
   setIsNewColumnConfigDialog: () => void,
 }) {
   return (
-    <dialog open={isNewColumnConfigDialog}>
-      <form onSubmit={onSubmitNewColumn}>
-        <input
+    <>
+      <form className="flex flex-col justify-start gap-1" onSubmit={onSubmitNewColumn}>
+        <Input
           name='columnname'
           placeholder='Nome da Coluna' 
           type="text" 
@@ -33,20 +36,13 @@ export function DialogItem({
             </option>
           ))}
         </select>
-        <footer>
-          <button 
-            onClick={setIsNewColumnConfigDialog}
-            type="reset"
-          >
-            Cancelar
-          </button>
-          <button  
-            type="submit"
-          >
+        <Button 
+          className="mt-3" 
+          type="submit"
+        >
             Criar
-          </button>
-        </footer>
+        </Button>
       </form>
-    </dialog>
+    </>
   )
 }

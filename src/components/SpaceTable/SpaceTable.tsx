@@ -15,6 +15,21 @@ import {
 import { DialogItem } from './TableItems/Dialog';
 import { TableHeader } from './TableItems/TableHeader';
 import { FormattedRowsColumns, transformTableRowColumns } from './utils/tableDataFormat';
+import {
+  Table,
+  THead,
+  TBody,
+  TFooter,
+  THColumn,
+  TRow,
+  TColumn,
+  TableCaption,
+} from '../ui/table';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Calendar } from '../ui/calendar';
 
 const ColumnTypes = [
   'TEXT',
@@ -203,49 +218,52 @@ export function SpaceTable({
       />
 
       {spaceTableState && !onTableCreateFinish ? 
-        <table>
-          <thead>
-            <tr>
+        <Table className={cn('shadow-xl rounded-xl')}>
+          <THead>
+            <TRow >
               {spaceTableState.columns?.map(column => (
-                <th 
+                <THColumn 
                   colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}
                   onClick={() => setColSpanColumnReference(column.columnReference)}
                   key={column.id}
                 >
                   {column.name}
-                </th>
+                </THColumn>
               ))}
 
               {/* FIXED COLUMNS */}
-              <th >
-                <button 
-                  onClick={() => setIsNewColumnConfigDialog(!isNewColumnConfigDialog)} 
-                >
-                  + {spaceTableState.columns?.length < 1 && 'Adicionar Coluna'}
-                </button>
-
+              <THColumn className={cn('py-4')}>
+                <Popover>
+                  <PopoverTrigger>
+                    <Button variant={'outline'}>
+                      + {spaceTableState.columns?.length < 1 && 'Adicionar Coluna'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
                 {/* Column Configuration */}
-                <DialogItem 
-                  columnTypes={ColumnTypes}
-                  isNewColumnConfigDialog={isNewColumnConfigDialog}
-                  onSubmitNewColumn={(e) => onCreateNewColumn(e)}
-                  setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
-                />
-              </th>
+                    <DialogItem 
+                      columnTypes={ColumnTypes}
+                      isNewColumnConfigDialog={isNewColumnConfigDialog}
+                      onSubmitNewColumn={(e) => onCreateNewColumn(e)}
+                      setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </THColumn>
               {spaceTableState.columns?.length < 1 && 
-                <th></th>
+                <THColumn></THColumn>
               }
-              <th>
+              <THColumn>
                 Açoes
-              </th>
-            </tr>
-          </thead>
+              </THColumn>
+            </TRow>
+          </THead>
 
-          <tbody>
+          <TBody>
             {tableRowColumns.map((row) => (
-                <tr key={row.id}>
+                <TRow key={row.id}>
                   {spaceTableState.columns.map((column) => (
-                    <td key={`${column.columnReference}-${row.rowReference}`} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
+                    <TColumn key={`${column.columnReference}-${row.rowReference}`} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
                       {row.columns.map((rowColumn) => (
                         <Fragment key={`${rowColumn.rowId}-${rowColumn.columnId}`}>
                           {rowColumn.columnReference === column.columnReference
@@ -253,114 +271,151 @@ export function SpaceTable({
                               {editRowReference !== row.rowReference
                                 ? <span>{rowColumn.rowValue}</span>
                                 :
-                                  <input
-                                    onChange={(e) => {
-                                      const value = column.columnType === 'CHECKBOX' 
-                                      ? e.target.checked
-                                      : e.target.value 
+                                  <>
+                                    {column.columnType === "DATE" ?
+                                      <Popover>
+                                        <PopoverTrigger>
+                                          <Button variant={'outline'}>                                          
+                                            {rowColumn.rowValue ? rowColumn.rowValue : 'Selecione a Data'}
+                                          </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                          <Calendar 
+                                            mode='single'
+                                            
+                                          />
+                                        </PopoverContent>
+                                      </Popover>
+                                    :
+                                    <Input
+                                      onChange={(e) => {
+                                        const value = column.columnType === 'CHECKBOX' 
+                                        ? e.target.checked
+                                        : e.target.value 
 
-                                      if (rowColumn.rowId) {
-                                        addColumnRowToUpdateArray({
-                                          columnReference: rowColumn.columnReference,
-                                          rowReference: row.rowReference,
-                                          value: String(value)
-                                        })
-                                      } else {
-                                        addColumnRowToCreateArray({
-                                          columnReference: rowColumn.columnReference,
-                                          rowReference: row.rowReference,
-                                          value: String(value)
-                                        })
-                                      }
-                                    }}
-                                    placeholder={rowColumn.rowValue}
-                                    type={column.columnType.toLowerCase()}
-                                  />
+                                        if (rowColumn.rowId) {
+                                          addColumnRowToUpdateArray({
+                                            columnReference: rowColumn.columnReference,
+                                            rowReference: row.rowReference,
+                                            value: String(value)
+                                          })
+                                        } else {
+                                          addColumnRowToCreateArray({
+                                            columnReference: rowColumn.columnReference,
+                                            rowReference: row.rowReference,
+                                            value: String(value)
+                                          })
+                                        }
+                                      }}
+                                      placeholder={rowColumn.rowValue}
+                                      type={column.columnType.toLowerCase()}
+                                    />
+                                    }
+                                  </>
                               }
                             </>
                           : null}
                         </Fragment>
                       ))}
-                    </td>
+                    </TColumn>
                   ))}
                   
                   {/* FIXED COLUMNS ACTIONS*/}
-                  <td>
+                  <TColumn>
                     {editRowReference === row.rowReference
                     ? (
-                      <button onClick={() => {
+                      <Button onClick={() => {
                         sendRowColumnsCreate()
                         sendRowColumnsUpdate()
                       }}>
                         Salvar
-                      </button>
+                      </Button>
                     )
-                    : <button onClick={() => setEditRowReference(row.rowReference)}>Editar</button>}
-                  </td>
-                  <td>
-                    <div>
-                      <button 
-                      
+                    : <Button variant={'secondary'} onClick={() => setEditRowReference(row.rowReference)}>Editar</Button>}
+                  </TColumn>
+                  <TColumn>
+                    <div className='flex items-center gap-2'>
+                      <Button 
+                        variant={'destructive'}
                         onClick={() => sendDeleteRow(row.rowReference)}
                       >
                         <PiTrashBold 
                         />
-                      </button>                      
+                      </Button>                      
                       <TfiArrowsVertical/>
                     </div>
-                  </td>
-                </tr>
+                  </TColumn>
+                </TRow>
             ))}
 
-            <tr>
+            <TRow>
               {isNewRow ?
                 <>
                   {spaceTableState.columns.map((column) => (
-                    <td key={column.columnReference} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
-                      <input
-                        onChange={(e) => {
-                          const value = column.columnType === 'CHECKBOX' 
-                          ? e.target.checked
-                          : e.target.value 
+                    <TColumn key={column.columnReference} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
+                      {/* {column.columnType === 'DATE' 
+                      ?  
+                      <Popover>
+                        <PopoverTrigger>
+                          <Button variant={'outline'}>  
+                            {'Data'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <Calendar 
+                            mode='single'
+                            
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      : */}
+                        <Input
+                          onChange={(e) => {
+                            const value = column.columnType === 'CHECKBOX' 
+                            ? e.target.checked
+                            : e.target.value 
 
-                          const nextRowReference = tableRowColumns.length
+                            const nextRowReference = tableRowColumns.length
 
-                          addColumnRowToCreateArray({
-                            columnReference: column.columnReference,
-                            rowReference: column.rows.length ? nextRowReference + 1 : 0,
-                            value: String(value)
-                          })
-                        }}
-                        type={column.columnType}
-                      />
-                    </td>
+                            addColumnRowToCreateArray({
+                              columnReference: column.columnReference,
+                              rowReference: column.rows.length ? nextRowReference + 1 : 0,
+                              value: String(value)
+                            })
+                          }}
+                          type={column.columnType}
+                        />
+                      {/* } */}
+                    </TColumn>
                   ))}
                   {/* FIXED COLUMNS ACTIONS*/}
-                  <td>
-                    <button onClick={() => {
+                  <TColumn>
+                    <Button onClick={() => {
                       sendRowColumnsCreate()
                     }}>
                         Salvar
-                    </button>
-                  </td>
-                  <td>
-                    <div>
-                      <button onClick={() => setIsNewRow(!isNewRow)}>
+                    </Button>
+                  </TColumn>
+                  <TColumn>
+                    <div className='flex items-center gap-2'>
+                      <Button variant={'destructive'} onClick={() => setIsNewRow(!isNewRow)}>
                         <PiTrashBold 
                         />
-                      </button>
+                      </Button>
                       {/* <button>+</button> */}
                       <TfiArrowsVertical/>
                     </div>
-                  </td>
+                  </TColumn>
                 </>
               : <>
-                  {spaceTableState.columns.length ? <td colSpan={spaceTableState.columns.length + 1} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</td> : null}
+                  {spaceTableState.columns.length 
+                  ? <TColumn className='cursor-pointer' colSpan={spaceTableState.columns.length + 1} onClick={() => setIsNewRow(!isNewRow)}>+ Linha</TColumn> 
+                  : null}
                 </>
               }
-            </tr>
-          </tbody>
-        </table>
+            </TRow>
+          </TBody>
+        </Table>
       : null}
     </section>
   )

@@ -13,7 +13,7 @@ export function ToggleTheme({
   const { setTheme, theme } = useTheme()
 
   return (
-    <Button className={cn(css, 'p-3')} onClick={() => theme === 'light' ? setTheme('dark') : setTheme('light')}>
+    <Button variant={'default'} className={cn(css, 'p-3 bg-slate-700 dark:bg-white dark:text-slate-700')} onClick={() => theme === 'light' ? setTheme('dark') : setTheme('light')}>
       {theme === 'light' ? <FaMoon className="w-[20px] h-[17px]" /> : <FaSun className="w-[20px] h-[17px]" />}
     </Button>
   )
