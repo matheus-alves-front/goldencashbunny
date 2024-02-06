@@ -1,6 +1,8 @@
 import { fetchInstanceWithCookies } from "@/api/fetchInstances";
 import { SpaceType } from "@/@types/globalTypes";
 import SpacePageClient from "./page.client";
+import { Suspense } from "react";
+import Loading from "./Loading";
 
 export default async function SpacePage({
   params
@@ -15,17 +17,17 @@ export default async function SpacePage({
     space: spaceId
   } = params
 
-  const spaces: SpaceType[] = await fetchInstanceWithCookies(`/workspace/${workspaceId}/spaces`, {
+  const space: SpaceType = await fetchInstanceWithCookies(`/space/${spaceId}`, {
     method: 'GET'
   })
 
-  const space = spaces.find(space => space.id === spaceId) as SpaceType
-
   return (
-    <SpacePageClient 
-      space={space}
-      workspaceId={workspaceId}
-      spaceTables={space.tables}
-    />
+    <Suspense fallback={<Loading />}>
+      <SpacePageClient 
+        space={space}
+        workspaceId={workspaceId}
+        spaceTables={space.tables}
+      />
+    </Suspense>
   )
 }

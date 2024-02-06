@@ -33,9 +33,7 @@ export default async function WorkspaceLayout({
 
   if (!account) return redirect('/')
 
-  const workspaces: WorkspaceType[] = await fetchInstanceWithCookies(`/workspace/account/${account.id}`, {})
-  
-  const workspace = workspaces.find(workspace => workspace.id === workspaceId) as WorkspaceType
+  const workspace: WorkspaceType = await fetchInstanceWithCookies(`/workspace/${workspaceId}`, {})
 
   return (
     <ActualWorkspaceContextProvider>
@@ -55,7 +53,7 @@ export default async function WorkspaceLayout({
               workspace={workspace}
               css=''
             />
-            <main className='border-t border-foreground p-2 pr-0'>
+            <main className='border-t border-foreground p-2 pr-0 overflow-auto'>
               {children}
             </main>
           </ThemeContextProvider>

@@ -23,36 +23,34 @@ export default function SpacePageClient({
 
   return (
     <section className={cn('px-3 py-6')}>
-      <Suspense fallback={<Loading />}>
-        <h1 className="text-3xl font-bold text-slate-700 dark:text-gray-200 mb-5">
-          {space.name} 
-          <Button
-            variant={'goldenPrimary'}
-            className={cn('font-bold text-lg rounded-3xl py-0 px-3 ml-4 mr-1')} 
-            onClick={() => setIsCreateNewTable(!isCreateNewTable)}
-          >
-            <HiOutlinePlus />
-          </Button>
-          <Badge variant={'secondary'}><small>Criar Categoria</small></Badge>
-        </h1>
-      
-        {isCreateNewTable && 
-          <SpaceTable 
-            workspaceId={workspaceId}
-            spaceTable={{} as FullSpaceTablesType}
-            space={space}
-            onTableCreateFinish={() => setIsCreateNewTable(false)}
-          />
-        }
-        {spaceTables.map((table) => (
-          <SpaceTable 
-            workspaceId={workspaceId}
-            key={table.id}
-            space={space}
-            spaceTable={table}
-          /> 
-        ))}
-      </Suspense>
+      <h1 className="text-3xl font-bold text-slate-700 dark:text-gray-200 mb-5">
+        {space.name} 
+        <Button
+          variant={'goldenPrimary'}
+          className={cn('font-bold text-lg rounded-3xl py-0 px-3 ml-4 mr-1')} 
+          onClick={() => setIsCreateNewTable(!isCreateNewTable)}
+        >
+          <HiOutlinePlus />
+        </Button>
+        <Badge variant={'secondary'}><small>Criar Categoria</small></Badge>
+      </h1>
+    
+      {isCreateNewTable && 
+        <SpaceTable 
+          workspaceId={workspaceId}
+          spaceTable={{} as FullSpaceTablesType}
+          space={space}
+          onTableCreateFinish={() => setIsCreateNewTable(false)}
+        />
+      }
+      {spaceTables.map((table) => (
+        <SpaceTable 
+          workspaceId={workspaceId}
+          key={table.id}
+          space={space}
+          spaceTable={table}
+        /> 
+      ))}
     </section>
   )
 }

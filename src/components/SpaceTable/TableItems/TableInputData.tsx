@@ -67,7 +67,7 @@ export function TableInputData({
             </TColumn>
           ))}
           {/* FIXED COLUMNS ACTIONS*/}
-          <TColumn>
+          <TColumn className="text-center">
             <Button onClick={() => {
               sendRowColumnsCreate()
             }}>
@@ -75,7 +75,7 @@ export function TableInputData({
             </Button>
           </TColumn>
           <TColumn>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center justify-center gap-2'>
               <Button variant={'destructive'} onClick={() => setIsNewRow(!isNewRow)}>
                 <PiTrashBold 
                 />

@@ -97,7 +97,7 @@ export function TableData({
           ))}
           
           {/* FIXED COLUMNS ACTIONS*/}
-          <TColumn>
+          <TColumn className="text-center">
             {editRowReference === row.rowReference
             ? (
               <Button onClick={() => {
@@ -110,14 +110,27 @@ export function TableData({
             : (<Button variant={'secondary'} onClick={() => setEditRowReference(row.rowReference)}>Editar</Button>)}
           </TColumn>
           <TColumn>
-            <div className='flex items-center gap-2'>
-              <Button 
-                variant={'destructive'}
-                onClick={() => sendDeleteRow(row.rowReference)}
-              >
-                <PiTrashBold 
-                />
-              </Button>                      
+            <div className='flex items-center justify-center gap-2'>
+              <Popover>
+                <PopoverTrigger>
+                  <Button 
+                    variant={'destructive'}
+                  >
+                    <PiTrashBold 
+                    />
+                  </Button>                      
+                </PopoverTrigger>
+                <PopoverContent className="w-auto text-center">
+                  <p className="pb-4">Confirmar</p>
+                  <Button 
+                    variant={'destructive'}
+                    onClick={() => sendDeleteRow(row.rowReference)}
+                  >
+                    Excluir
+                  </Button>  
+                </PopoverContent>
+              </Popover>
+              
               <TfiArrowsVertical/>
             </div>
           </TColumn>

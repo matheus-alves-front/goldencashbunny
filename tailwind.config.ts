@@ -76,7 +76,7 @@ const config = {
         'layout': '240px 1fr;'
       },
       gridTemplateRows: {
-        'layout': '70px calc(100vh - 70px);'
+        'layout': '70px calc(100vh - 86px);'
       }
     },
   },

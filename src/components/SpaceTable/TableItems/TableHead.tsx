@@ -28,6 +28,7 @@ export function TableHead({
       <TRow >
         {spaceTable.columns?.map(column => (
           <THColumn 
+            className="cursor-pointer"
             colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}
             onClick={() => setColSpanColumnReference(column.columnReference)}
             key={column.id}
@@ -38,7 +39,7 @@ export function TableHead({
 
         {/* FIXED COLUMNS */}
         {/* Column Configuration */}
-        <THColumn className={cn('py-4')}>
+        <THColumn className={cn('py-4 text-center')}>
           <Popover>
             <PopoverTrigger>
               <Button variant={'outline'}>
@@ -59,7 +60,7 @@ export function TableHead({
         {spaceTable.columns?.length < 1 && 
           <THColumn></THColumn>
         }
-        <THColumn>
+        <THColumn className={cn('py-4 text-center')}>
           Açoes
         </THColumn>
       </TRow>
