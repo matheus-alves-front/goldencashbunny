@@ -19,26 +19,13 @@ export default async function SpacePage({
     method: 'GET'
   })
 
-  const space = spaces.find(space => space.id === spaceId)
-
-  // @ts-ignore 
-  if (!space) {
-    return (
-      <>
-        <h1>Alguma coisa deu errado...</h1>
-        {/* @ts-ignore */}
-        <p>{space.error}</p>
-      </>
-    )
-  }
+  const space = spaces.find(space => space.id === spaceId) as SpaceType
 
   return (
-    <>
-      <SpacePageClient 
-        space={space}
-        workspaceId={workspaceId}
-        spaceTables={space.tables}
-      />
-    </>
+    <SpacePageClient 
+      space={space}
+      workspaceId={workspaceId}
+      spaceTables={space.tables}
+    />
   )
 }
