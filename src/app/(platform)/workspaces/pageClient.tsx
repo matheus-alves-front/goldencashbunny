@@ -50,7 +50,7 @@ export function WorkspacesClientPage({
           {workspaces.map((workspace) => (
             <Link 
               key={workspace.id}
-              className="p-5 bg-foreground text-primary-foreground rounded
+              className="p-5 bg-white text-gray-800 shadow-lg rounded
               relative"
               // onClick={() => UpdateActiveWorkspace(workspace)}
               href={`workspace/${workspace.id}/dashboard`} 
@@ -68,7 +68,7 @@ export function WorkspacesClientPage({
         ? 
           <form 
             onSubmit={onCreateWorkspace}
-            className="p-5 bg-foreground font-bold
+            className="p-5 bg-white text-gray-800 shadow-lg font-bold
             rounded flex flex-col gap-2"
           >
             <Input 
