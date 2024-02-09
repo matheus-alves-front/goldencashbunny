@@ -2,7 +2,7 @@
 import { TColumn, TRow } from "@/components/ui/table"
 import { FormattedRowsColumns } from "../utils/tableDataFormat"
 import { SpaceTableType } from "@/@types/globalTypes"
-import { Fragment } from "react"
+import { DragEvent, Fragment } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -10,6 +10,11 @@ import { Input } from "@/components/ui/input";
 import { CreateUpdateRowColumnType } from "../utils/table-handler";
 import { PiTrashBold } from "react-icons/pi";
 import { TfiArrowsVertical } from "react-icons/tfi";
+import { cn } from "@/lib/utils"
+
+type OnDragStartFunctionType = (rowReference: number) => (event: DragEvent<HTMLDivElement>) => void;
+type OnDragOverFunctionType = (rowReference: number) => (event: DragEvent<HTMLDivElement>) => void;
+type OnDropFunctionType = (rowReference: number) => (event: DragEvent<HTMLDivElement>) => void;
 
 export function TableData({
   tableRowColumns,
@@ -22,6 +27,9 @@ export function TableData({
   sendRowColumnsUpdate,
   sendDeleteRow,
   colSpanColumnReference,
+  OnDragStartFunction,
+  OnDragOverFunction,
+  OnDropFunction,
 }: {
   tableRowColumns: FormattedRowsColumns[],
   spaceTableState: SpaceTableType,
@@ -32,12 +40,21 @@ export function TableData({
   sendRowColumnsUpdate: () => void,
   sendDeleteRow: (rowReference: number) => void
   setEditRowReference: (rowReference: number | null) => void,
-  colSpanColumnReference: number
+  colSpanColumnReference: number,
+  OnDragStartFunction: OnDragStartFunctionType,
+  OnDragOverFunction: OnDragOverFunctionType,
+  OnDropFunction: OnDropFunctionType,
 }) {
+
   return (
     <>
       {tableRowColumns.map((row) => (
-        <TRow key={row.id}>
+        <TRow key={row.id} 
+          draggable
+          onDragStart={OnDragStartFunction(row.rowReference)}
+          onDragOver={OnDragOverFunction(row.rowReference)}
+          onDrop={OnDropFunction(row.rowReference)}
+        >
           {spaceTableState.columns.map((column) => (
             <TColumn key={`${column.columnReference}-${row.rowReference}`} colSpan={column.columnReference === colSpanColumnReference ? 2 : 1}>
               {row.columns.map((rowColumn) => (
@@ -100,17 +117,25 @@ export function TableData({
           <TColumn className="text-center">
             {editRowReference === row.rowReference
             ? (
-              <Button onClick={() => {
-                sendRowColumnsCreate()
-                sendRowColumnsUpdate()
-              }}>
+              <Button
+                onClick={() => {
+                  sendRowColumnsCreate()
+                  sendRowColumnsUpdate()
+                }}
+              >
                 Salvar
               </Button>
             )
-            : (<Button variant={'secondary'} onClick={() => setEditRowReference(row.rowReference)}>Editar</Button>)}
+            : (
+              <Button 
+                variant={'outline'} 
+                onClick={() => setEditRowReference(row.rowReference)}>
+                  Editar
+              </Button>
+            )}
           </TColumn>
           <TColumn>
-            <div className='flex items-center justify-center gap-2'>
+            <div className='flex items-center justify-center gap-4 pl-2'>
               <Popover>
                 <PopoverTrigger>
                   <Button 
@@ -131,7 +156,9 @@ export function TableData({
                 </PopoverContent>
               </Popover>
               
-              <TfiArrowsVertical/>
+              <span className="text-xl cursor-grab p-2 flex-1 flex justify-end">
+                <TfiArrowsVertical />
+              </span>
             </div>
           </TColumn>
         </TRow>

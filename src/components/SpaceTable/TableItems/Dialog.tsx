@@ -1,14 +1,11 @@
-import { CustomStylesType } from "@/@types/globalTypes"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Popover, PopoverTrigger } from "@/components/ui/popover"
 import { FormEvent } from "react"
+import { COLUMN_TYPES_LABELS } from "../contants/ColumnTypes"
 
 export function DialogItem({
-  isNewColumnConfigDialog,
   onSubmitNewColumn,
   columnTypes,
-  setIsNewColumnConfigDialog
 }: {
   isNewColumnConfigDialog: boolean,
   onSubmitNewColumn: (e: FormEvent<HTMLFormElement>) => Promise<void>,
@@ -17,7 +14,7 @@ export function DialogItem({
 }) {
   return (
     <>
-      <form className="flex flex-col justify-start gap-1" onSubmit={onSubmitNewColumn}>
+      <form className="flex flex-col justify-start gap-2" onSubmit={onSubmitNewColumn}>
         <Input
           name='columnname'
           placeholder='Nome da Coluna' 
@@ -26,13 +23,14 @@ export function DialogItem({
         <label htmlFor="columntype">
           Tipo
         </label>
-        <select name="columntype" id="columntype">
+        <select className="p-2 rounded" name="columntype" id="columntype">
           {columnTypes.map((type) => (
             <option 
               value={type}
               key={type}
             >
-              {type}
+              {/* @ts-ignore */}
+              {COLUMN_TYPES_LABELS[type]}
             </option>
           ))}
         </select>

@@ -25,10 +25,14 @@ export async function SidebarMenu({
   })
 
   return (
-    <aside className={cn(css, 'grid grid-rows-layout border-r border-foreground items-stretch')}>
+    <aside className={cn(css, 'grid grid-rows-layout border-r border-foreground items-stretch justify-stretch')}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className='m-2 ml-0 w-auto self-center rounded-2xl bg-slate-800 text-white hover:text-slate-700 hover:bg-white' variant="default">{workspace.companyName} Workspace</Button>
+          <Button className='m-auto ml-0 w-auto  rounded-2xl bg-slate-800 text-white hover:text-slate-700 hover:bg-white' variant="default">
+            <span>
+              {workspace.companyName} Workspace
+            </span>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel><Link className="w-full" href={'/workspaces'}>Trocar Workspace</Link></DropdownMenuLabel>

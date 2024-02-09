@@ -53,7 +53,7 @@ export default async function WorkspaceLayout({
               workspace={workspace}
               css=''
             />
-            <main className='border-t border-foreground p-2 pr-0 overflow-auto'>
+            <main className='border-t border-foreground p-2 pb-6 pr-0 overflow-auto'>
               {children}
             </main>
           </ThemeContextProvider>

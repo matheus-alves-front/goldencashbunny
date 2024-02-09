@@ -88,7 +88,7 @@ export function TableInputData({
       : <>
           {spaceTableState.columns.length 
           ? <TColumn 
-            className='cursor-pointer' 
+            className='cursor-pointer hover:bg-neutral-200 dark:hover:bg-slate-500 rounded-xl' 
             colSpan={spaceTableState.columns.length + 1} 
             onClick={() => setIsNewRow(!isNewRow)}
             >

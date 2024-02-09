@@ -67,7 +67,7 @@ export function SpaceTable({
     setSpaceTableState(spaceTable)
   }
   
-  // Managers
+  // Table CRUD Managers
   const [isNewColumnConfigDialog, setIsNewColumnConfigDialog] = useState(false) // Column
   const [colSpanColumnReference, setColSpanColumnReference] = useState(0) // Expand Column
 
@@ -162,19 +162,68 @@ export function SpaceTable({
     setSpaceTableState(spaceTable)
   }
  
+  // Drag Reorder Functions
+  const [dragStartRow, setDragStartRow] = useState<number | null>(null);
+  const [dragOverRow, setDragOverRow] = useState<number | null>(null);
 
-  // const onDragStartListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
-  //   e.dataTransfer.setData('index', index.toString());
-  // };
+  const onDragStart = (rowReference: number) => (event: React.DragEvent<HTMLDivElement>) => {
+    setDragStartRow(rowReference);
+    event.dataTransfer.setData('text/plain', rowReference.toString());
+  };
 
-  // const onDragOverListReorder = (e: DragEvent<HTMLTableRowElement>, index: number): void => {
-  //   e.preventDefault();
-  //   const draggedIndex = Number(e.dataTransfer.getData('index'));
-  //   if (draggedIndex === index) return;
-  //   const reorderArray = [...tableDataState];
-  //   reorderArray.splice(index, 0, reorderArray.splice(draggedIndex, 1)[0]);
-  //   setTableDataState(reorderArray);
-  // };
+  const onDragOver = (rowReference: number) => (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragOverRow(rowReference);
+  };
+
+  const onDrop = (rowReference: number) => async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+
+    const reorderResponseTable = await fetchInstanceWithCookies(`/space/table/${spaceTable.id}/row`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        from: dragStartRow,
+        to: dragOverRow
+      })
+    }) 
+
+    if (reorderResponseTable) {
+      setSpaceTableState(reorderResponseTable)
+    }
+
+    setDragStartRow(null);
+    setDragOverRow(null);
+  };
+
+  const [draggedColumn, setDraggedColumn] = useState<number | null>(null);
+  const [draggedColumnId, setDraggedColumnId] = useState<string | null>(null);
+
+  const handleDragColumnStart = (columnReference: number, columnId: string) => (event: React.DragEvent) => {
+    setDraggedColumn(columnReference);
+    setDraggedColumnId(columnId)
+  };
+
+  const handleDragOverColumn = (event: React.DragEvent) => {
+    event.preventDefault();
+  };
+
+  const handleDropColumn = (columnReference: number) => async (event: React.DragEvent) => {
+    event.preventDefault();
+    if (draggedColumn !== null) {
+      const reorderColumnResponseTable = await fetchInstanceWithCookies(`/space/table/column/${draggedColumnId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          columnReference 
+        })
+      }) 
+
+      if (reorderColumnResponseTable) setSpaceTableState(reorderColumnResponseTable)
+    }
+
+    setDraggedColumn(null);
+    setDraggedColumnId(null)
+  };
+
 
   useEffect(() => {
     setSpaceTableState(spaceTable)
@@ -186,7 +235,7 @@ export function SpaceTable({
   }, [spaceTableState])
 
   return (
-    <section>
+    <section className='py-5'>
       <TableHeader 
         isInputName={!spaceTable.name}
         onSuccessSubmit={() => onCreateNewTable()}
@@ -203,6 +252,9 @@ export function SpaceTable({
             onSubmitNewColumn={(e) => onCreateNewColumn(e)}
             setIsNewColumnConfigDialog={() => setIsNewColumnConfigDialog(false)}
             spaceTable={spaceTableState}
+            OnColumnDragStartFunction={handleDragColumnStart}
+            OnColumnDragOverFunction={handleDragOverColumn}
+            OnColumnDropFunction={handleDropColumn}
           />
           <TBody>
             <TableData 
@@ -216,6 +268,10 @@ export function SpaceTable({
               sendDeleteRow={sendDeleteRow} 
               setEditRowReference={setEditRowReference}
               colSpanColumnReference={colSpanColumnReference}
+
+              OnDragOverFunction={onDragOver}
+              OnDragStartFunction={onDragStart}
+              OnDropFunction={onDrop}
             />
             <TableInputData 
               spaceTableState={spaceTableState}

@@ -68,6 +68,8 @@ export const onSubmitNewColumn = async (
   const name = formData.get('columnname') as string;
   const type = formData.get('columntype') as string;
 
+  if (!name) return
+
   const submitNewColumn: ColumnConfig = {
     name,
     columnType: type
