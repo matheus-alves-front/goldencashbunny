@@ -1,16 +1,17 @@
 "use client"
-import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { TBody, TColumn, THColumn, THead, TRow, Table } from "../ui/table"
 import { CreateCustomerSheet } from "./TableItems/CreateCustomerSheet"
 import { DetailsDialog } from "./TableItems/DetailsDialog"
 import { OrderFilter } from "./TableItems/Filters/OrderFilter"
 
+type CustomerTableProps = {
+  workspaceId: string
+}
+
 export const CustomerTable = ({
-
-}: {
-
-}) => {
+ workspaceId
+}: CustomerTableProps) => {
   return (
     <section className="p-2">
       <div className="p-2 py-4 mb-5 flex gap-4 items-end justify-start shadow-xl rounded">
@@ -22,7 +23,7 @@ export const CustomerTable = ({
           />
         </fieldset>
         <OrderFilter />
-        <CreateCustomerSheet />
+        <CreateCustomerSheet workspaceId={workspaceId} />
       </div>
       <Table className="shadow-xl rounded">
         <THead>

@@ -14,7 +14,7 @@ export default function CustomerPage( {
           Clientes
         </h1>
       </section>
-      <CustomerTable />
+      <CustomerTable workspaceId={params.workspaceId} />
     </>
   )
 }

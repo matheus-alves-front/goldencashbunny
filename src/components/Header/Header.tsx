@@ -1,9 +1,10 @@
 import { JWTAccountType, WorkspaceType } from '@/@types/globalTypes'
 import Image from 'next/image'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { ToggleTheme } from '../ToggleTheme/ToggleTheme'
+import { LogoutItem } from './Items/AccountMenu'
 
 export function Header({
   account, 
@@ -36,6 +37,9 @@ export function Header({
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <LogoutItem />
+              </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>

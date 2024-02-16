@@ -17,6 +17,10 @@ export async function onAccountConnect() {
     method: 'GET'
   })
 
+  // if (!account) {
+
+  // }
+
   if (account.id) {
     redirect('/workspaces')
   } else {
