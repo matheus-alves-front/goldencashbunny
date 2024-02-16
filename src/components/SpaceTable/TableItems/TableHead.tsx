@@ -76,7 +76,7 @@ export function TableHead({
         {spaceTable.columns?.length < 1 && 
           <THColumn></THColumn>
         }
-        <THColumn className={cn('py-4 text-center')}>
+        <THColumn className={cn('py-4 text-center border')}>
           Açoes
         </THColumn>
       </TRow>

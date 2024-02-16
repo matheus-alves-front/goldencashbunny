@@ -3,9 +3,10 @@ import { SpaceTableType } from "@/@types/globalTypes"
 import { onCreateTable, onTableNameUpdate } from "@/components/SpaceTable/utils/table-handler"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { BaseHTMLAttributes, useEffect, useState } from "react"
-
+import { FaPencilAlt } from "react-icons/fa";
 interface TableHeaderProps extends BaseHTMLAttributes<HTMLHeadingElement> {
   isInputName: boolean,
   table: SpaceTableType,
@@ -21,8 +22,11 @@ export function TableHeader({
   ...rest
 }: TableHeaderProps) {
   const [tableName, setTableName] = useState('')
+  const [isEditName, setIsEditName] = useState(false)
 
   const onSubmitSpaceTable = async () => {
+    setIsEditName(false)
+
     if (isInputName || !tableName) {
       await onCreateTable(tableName, spaceRef)
       
@@ -38,9 +42,9 @@ export function TableHeader({
 
   return (
     <>
-      {isInputName
+      {isInputName || isEditName
       ?
-        <header {...rest} className={cn('flex gap-2 items-center pt-8')} >
+        <header {...rest} className={cn('flex gap-2 items-center pt-8 pb-5')} >
           <Input
             value={tableName}
             onChange={(e) => setTableName(e.target.value)}
@@ -52,7 +56,20 @@ export function TableHeader({
           </Button>
         </header>
       :
-        <h3 className="pt-8 pb-5 font-semibold">{tableName}</h3>
+        <header className="pt-4 pb-5">
+          <h3 className="pb-4 font-semibold flex gap-2">
+            {tableName}
+            <FaPencilAlt onClick={() => setIsEditName(true)} className="hover:text-slate-800 cursor-pointer" />
+          </h3>
+          <nav>
+            <label className="text-xs text-slate-600 font-semibold">Menu:</label>
+            <Input
+              className="w-64"
+              placeholder="Procurar" 
+              type="search" 
+            />
+          </nav>
+        </header>
       }
     </>
   )

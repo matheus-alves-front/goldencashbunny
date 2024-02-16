@@ -62,7 +62,7 @@ export async function SidebarMenu({
           Precificações
         </Link>
         <Link 
-          href=""
+          href={`/workspace/${workspace.id}/customer`} 
           className={cn("w-full flex items-center gap-2 dark:text-gray-300 text-slate-600 my-3 hover:ml-1 transition-all")}
         >
           <BsTools className={cn("p-2 w-[35px] h-[35px] shadow-lg rounded-xl")} /> 

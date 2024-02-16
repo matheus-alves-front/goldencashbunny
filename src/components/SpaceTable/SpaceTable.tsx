@@ -20,6 +20,7 @@ import {
 import { TableHead } from './TableItems/TableHead';
 import { TableData } from './TableItems/TableData';
 import { TableInputData } from './TableItems/TableInputData';
+import { Separator } from '../ui/separator';
 
 type TableCreationProps = {
   spaceTable: SpaceTableType,
@@ -242,6 +243,7 @@ export function SpaceTable({
         table={spaceTable}
         spaceRef={space.id}
       />
+      <Separator />
 
       {spaceTableState && !onTableCreateFinish ? 
         <Table className={cn('shadow-xl rounded-xl')}>
@@ -282,7 +284,6 @@ export function SpaceTable({
               isNewRow={isNewRow}
               setIsNewRow={setIsNewRow}
             />
-            
           </TBody>
         </Table>
       : null}

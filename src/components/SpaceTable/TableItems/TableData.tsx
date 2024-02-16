@@ -134,7 +134,7 @@ export function TableData({
               </Button>
             )}
           </TColumn>
-          <TColumn>
+          <TColumn className="border">
             <div className='flex items-center justify-center gap-4 pl-2'>
               <Popover>
                 <PopoverTrigger>
