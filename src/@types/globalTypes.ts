@@ -71,7 +71,7 @@ export interface FullSpaceTablesType extends SpaceTableType {
   data: TableDataType[]
 }
 
-export interface CustomerTyoe {
+export interface CustomerType {
   firstName: string,
   lastName: string,
   cpf: string,

@@ -2,11 +2,9 @@
 import { AddressType } from "@/@types/globalTypes"
 import { fetchInstanceWithCookies } from "@/api/fetchInstances"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
@@ -57,7 +55,7 @@ export const CreateCustomerSheet = ({
       method: 'GET'
     })
 
-    if (addressResponse) {
+    if (!addressResponse.errorMessage) {
       setAddress(addressResponse)
     }
   }
@@ -91,22 +89,21 @@ export const CreateCustomerSheet = ({
       companyName,
       cpf,
       email,
+      additionalEmails: [],
       phone,
       CEP,
-      additionalEmails: [''],
       address: {
         ...address,
         complement: `${numberAddress}, ${complement}`
       }
     }
 
-    console.log('sendCustomer', sendCustomer)
-
+    console.log('sendCustomer', JSON.stringify(sendCustomer))
+  
     const customerFetch = await fetchInstanceWithCookies(`/customer/workspace/${workspaceId}`, {
       method: 'POST',
       body: JSON.stringify(sendCustomer)
     })
-
     console.log("customerFetch", customerFetch)
   }
 

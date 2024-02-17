@@ -1,12 +1,22 @@
+import { CustomerType } from "@/@types/globalTypes"
+import { fetchInstanceWithCookies } from "@/api/fetchInstances"
 import { CustomerTable } from "@/components/CustomerTable/CustomerTable"
 
-export default function CustomerPage( {
+export default async function CustomerPage( {
   params
 }: {
   params: {
     workspaceId: string
   }
 }) {
+  let customerListFetch: CustomerType[] = await fetchInstanceWithCookies(`/customer/workspace/${params.workspaceId}`, {
+    method: 'GET'
+  })
+
+  if (!customerListFetch) {
+    customerListFetch = []
+  }
+
   return (
     <>
       <section className="p-2 pt-6">
@@ -14,7 +24,10 @@ export default function CustomerPage( {
           Clientes
         </h1>
       </section>
-      <CustomerTable workspaceId={params.workspaceId} />
+      <CustomerTable 
+        workspaceId={params.workspaceId}
+        customerList={customerListFetch}
+      />
     </>
   )
 }
