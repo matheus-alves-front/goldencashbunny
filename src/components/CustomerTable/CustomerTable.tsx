@@ -14,7 +14,7 @@ export const CustomerTable = ({
 }: CustomerTableProps) => {
   return (
     <section className="p-2">
-      <div className="p-2 py-4 mb-5 flex gap-4 items-end justify-start shadow-xl rounded">
+      <div className=" py-4 flex gap-4 items-end justify-start rounded">
         <fieldset className="w-1/4">
           <Input
             placeholder="Pesquisar"

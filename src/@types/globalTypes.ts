@@ -8,7 +8,6 @@ export type AccountType = {
   cpf: string | null,
   cnpj: string | null
 }
-
 export interface JWTAccountType extends JwtPayload {
   iss: string,
   sub: string,
@@ -70,4 +69,25 @@ export interface CustomStylesType {
 export interface FullSpaceTablesType extends SpaceTableType {
   columns: TableColumnType[],
   data: TableDataType[]
+}
+
+export interface CustomerTyoe {
+  firstName: string,
+  lastName: string,
+  cpf: string,
+  companyName: string,
+  email: string,
+  phone: string,
+  additionalEmails: string[],
+  address: AddressType
+}
+
+export interface AddressType {
+  zipCode: string,
+  name: string,
+  complement: string,
+  neighborhood: string,
+  city: string,
+  state: string,
+  ibgeCode: string
 }
